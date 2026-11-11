@@ -16,10 +16,10 @@ export function Card({ tone = "paper", interactive = false, className, ...props 
   return (
     <article
       className={cn(
-        "rounded-card border-2 border-ink p-6 text-ink shadow-card",
+        "rounded-2xl border-3 border-ink p-6 text-ink shadow-card",
         tones[tone],
         interactive &&
-          "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:shadow-card-hover",
+          "transition-[transform,box-shadow,rotate] duration-200 ease-out hover:-translate-y-1 hover:-rotate-1 hover:shadow-card-hover",
         className,
       )}
       {...props}

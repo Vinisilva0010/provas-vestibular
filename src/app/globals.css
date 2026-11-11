@@ -11,10 +11,25 @@
   --color-paper: #ffffff;
 
   --font-sans: var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), Impact, "Arial Narrow", sans-serif;
 
   --radius-card: 1rem;
-  --shadow-card: 4px 4px 0 0 var(--color-ink);
-  --shadow-card-hover: 6px 6px 0 0 var(--color-ink);
+  --shadow-card: 6px 6px 0 0 var(--color-ink);
+  --shadow-card-hover: 10px 10px 0 0 var(--color-ink);
+}
+
+/* Condensed display type: Anton only ships weight 400, so never let it fake bold. */
+@utility display-type {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+}
+
+/* Hollow outlined letters, used only for decorative text. */
+@utility text-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--color-ink);
 }
 
 @layer base {
@@ -34,6 +49,19 @@
     font-weight: 600;
     line-height: 1.6;
     text-rendering: optimizeLegibility;
+    background-color: var(--color-paper);
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-violet) 9%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-violet) 9%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 32px 32px;
   }
 
   h1,
@@ -42,7 +70,6 @@
   h4 {
     font-weight: 800;
     line-height: 1.15;
-    letter-spacing: -0.01em;
   }
 
   a {
@@ -61,17 +88,6 @@
   ::selection {
     background-color: var(--color-sun);
     color: var(--color-ink);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
@@ -100,10 +116,38 @@
   }
 }
 
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @layer components {
   .professor-animated {
     animation:
       professor-enter 500ms ease-out both,
       professor-breathe 4s ease-in-out 500ms infinite;
+  }
+
+  .marquee {
+    animation: marquee 45s linear infinite;
+  }
+
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

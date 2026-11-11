@@ -7,6 +7,8 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/calendario",
 }));
 
+const mobileNav = { name: "Principal no celular" };
+
 describe("SiteHeader", () => {
   it("links the site name to the home page", () => {
     render(<SiteHeader />);
@@ -25,27 +27,40 @@ describe("SiteHeader", () => {
     expect(current).toHaveTextContent("Calendário");
   });
 
-  it("opens and closes the mobile menu with the button", async () => {
+  it("opens the mobile menu and moves focus to the close button", async () => {
     render(<SiteHeader />);
-    const button = screen.getByRole("button", { name: "Menu" });
-    expect(button).toHaveAttribute("aria-expanded", "false");
+    const menuButton = screen.getByRole("button", { name: "Menu" });
+    expect(menuButton).toHaveAttribute("aria-expanded", "false");
 
-    await userEvent.click(button);
-    expect(screen.getByRole("button", { name: "Fechar" })).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("navigation", { name: "Principal no celular" })).toBeInTheDocument();
+    await userEvent.click(menuButton);
 
-    await userEvent.click(screen.getByRole("button", { name: "Fechar" }));
-    await waitFor(() =>
-      expect(screen.queryByRole("navigation", { name: "Principal no celular" })).not.toBeInTheDocument(),
-    );
+    expect(menuButton).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("navigation", mobileNav)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Fechar" })).toHaveFocus();
   });
 
-  it("closes the mobile menu with Escape", async () => {
+  it("closes with the close button and returns focus to the menu button", async () => {
+    render(<SiteHeader />);
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    await userEvent.click(screen.getByRole("button", { name: "Fechar" }));
+
+    await waitFor(() => expect(screen.queryByRole("navigation", mobileNav)).not.toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "Menu" })).toHaveFocus();
+  });
+
+  it("closes with Escape", async () => {
     render(<SiteHeader />);
     await userEvent.click(screen.getByRole("button", { name: "Menu" }));
     await userEvent.keyboard("{Escape}");
-    await waitFor(() =>
-      expect(screen.queryByRole("navigation", { name: "Principal no celular" })).not.toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.queryByRole("navigation", mobileNav)).not.toBeInTheDocument());
+  });
+
+  it("locks page scrolling only while the menu is open", async () => {
+    render(<SiteHeader />);
+    await userEvent.click(screen.getByRole("button", { name: "Menu" }));
+    expect(document.body.style.overflow).toBe("hidden");
+
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(document.body.style.overflow).toBe(""));
   });
 });
