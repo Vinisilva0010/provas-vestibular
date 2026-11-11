@@ -112,6 +112,8 @@ export const eventSchema = z
     if (
       event.startDate !== undefined &&
       event.endDate !== undefined &&
+      isIsoDate(event.startDate) &&
+      isIsoDate(event.endDate) &&
       toEpochDay(event.endDate) < toEpochDay(event.startDate)
     ) {
       ctx.addIssue({ code: "custom", path: ["endDate"], message: "End date is before start date." });

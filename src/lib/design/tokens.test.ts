@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { WCAG_AA_NON_TEXT, WCAG_AA_TEXT, contrastRatio } from "./contrast";
 import { cssVariableName, palette, textBackgrounds, uiStrokeColors } from "./tokens";
@@ -19,7 +20,7 @@ describe("palette accessibility", () => {
 });
 
 describe("globals.css", () => {
-  const css = readFileSync(new URL("../../app/globals.css", import.meta.url), "utf8");
+  const css = readFileSync(join(process.cwd(), "src/app/globals.css"), "utf8");
 
   it.each(Object.keys(palette) as (keyof typeof palette)[])(
     "declares %s with the same value as tokens.ts",

@@ -13,25 +13,31 @@ function renderTabs(defaultTabId?: string) {
   render(<Tabs items={items} label="Seções da prova" defaultTabId={defaultTabId} />);
 }
 
+/** The tab panel that contains the given text. */
+function panelWith(text: string): HTMLElement | null {
+  return screen.getByText(text).closest('[role="tabpanel"]');
+}
+
 describe("Tabs", () => {
   it("shows the first tab by default and keeps every panel in the HTML", () => {
     renderTabs();
     expect(screen.getByRole("tab", { name: "Geral" })).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByText("Conteúdo geral")).toBeVisible();
-    expect(screen.getByText("Conteúdo das datas")).toBeInTheDocument();
-    expect(screen.getByText("Conteúdo das datas")).not.toBeVisible();
+    expect(panelWith("Conteúdo geral")).not.toHaveAttribute("hidden");
+    expect(panelWith("Conteúdo das datas")).toHaveAttribute("hidden");
+    expect(panelWith("Conteúdo da inscrição")).toHaveAttribute("hidden");
   });
 
   it("respects defaultTabId", () => {
     renderTabs("inscricao");
     expect(screen.getByRole("tab", { name: "Inscrição" })).toHaveAttribute("aria-selected", "true");
+    expect(panelWith("Conteúdo da inscrição")).not.toHaveAttribute("hidden");
   });
 
   it("switches panels on click", async () => {
     renderTabs();
     await userEvent.click(screen.getByRole("tab", { name: "Datas" }));
-    expect(screen.getByText("Conteúdo das datas")).toBeVisible();
-    expect(screen.getByText("Conteúdo geral")).not.toBeVisible();
+    expect(panelWith("Conteúdo das datas")).not.toHaveAttribute("hidden");
+    expect(panelWith("Conteúdo geral")).toHaveAttribute("hidden");
   });
 
   it("links each tab to its panel for screen readers", () => {
