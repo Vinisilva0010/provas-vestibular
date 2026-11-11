@@ -74,3 +74,36 @@
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes professor-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes professor-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@layer components {
+  .professor-animated {
+    animation:
+      professor-enter 500ms ease-out both,
+      professor-breathe 4s ease-in-out 500ms infinite;
+  }
+}
