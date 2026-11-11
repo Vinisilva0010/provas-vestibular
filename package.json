@@ -11,8 +11,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "check": "npm run lint && npm run typecheck && npm run test:coverage",
-    "test:e2e": "playwright test"
+    "check": "npm run lint && npm run typecheck && npm run test:coverage && npm run data:test && npm run data:validate",
+    "test:e2e": "playwright test",
+    "data:test": "cargo test --quiet --manifest-path tools/pvb-data/Cargo.toml",
+    "data:validate": "cargo run --quiet --manifest-path tools/pvb-data/Cargo.toml -- validate"
   },
   "dependencies": {
     "motion": "^14.12.0",
