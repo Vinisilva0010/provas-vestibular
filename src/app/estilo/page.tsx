@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { palette, type PaletteColor } from "@/lib/design/tokens";
+import { TabsDemo } from "./tabs-demo";
 
 export const metadata: Metadata = {
   title: "Guia visual",
@@ -100,6 +101,14 @@ export default function StyleGuidePage() {
             <h3 className="text-2xl">Fundo roxo claro</h3>
             <p className="mt-2">Para análises nossas, separadas do dado oficial.</p>
           </Card>
+        </div>
+      </Reveal>
+
+      <Reveal>
+        <h2 className="text-3xl">Abas</h2>
+        <p className="mt-2">Clique numa aba ou use as setas do teclado.</p>
+        <div className="mt-6">
+          <TabsDemo />
         </div>
       </Reveal>
 
