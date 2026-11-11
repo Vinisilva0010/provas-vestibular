@@ -1,0 +1,36 @@
+{
+  "description": "Shared signing vectors. The key is public and for tests only. Values were computed independently with Python: json.dumps(sort_keys=True, separators=(',', ':'), ensure_ascii=False) and HMAC-SHA256.",
+  "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "vectors": [
+    {
+      "name": "ascii-sorted-keys",
+      "document": {
+        "type": "exam",
+        "id": "pvb-exam-fuvest",
+        "hasStudyPlan": true,
+        "states": ["SP"],
+        "editionYear": 2027
+      },
+      "canonical": "{\"editionYear\":2027,\"hasStudyPlan\":true,\"id\":\"pvb-exam-fuvest\",\"states\":[\"SP\"],\"type\":\"exam\"}",
+      "signature": "97eea2d1a7960abd1b264f15a76f0603601c77a733f236563ca341cdc2d47b9f"
+    },
+    {
+      "name": "unicode-and-escapes",
+      "document": {
+        "name": "Unicamp — São Paulo",
+        "label": "1ª fase \"oficial\"\nlinha 2"
+      },
+      "canonical": "{\"label\":\"1ª fase \\\"oficial\\\"\\nlinha 2\",\"name\":\"Unicamp — São Paulo\"}",
+      "signature": "65d5fdbccfb4b5e3b6d0e46ff85b1f9caf25f093ad9540746d3efaadc6a3dd04"
+    },
+    {
+      "name": "nested-null-empty",
+      "document": {
+        "b": [],
+        "a": { "z": null, "y": 0, "x": -5 }
+      },
+      "canonical": "{\"a\":{\"x\":-5,\"y\":0,\"z\":null},\"b\":[]}",
+      "signature": "79a6bd2804c3b7eb03d4707a5da5a1ed821f27bdaeaf19b7c9601f683906782e"
+    }
+  ]
+}
