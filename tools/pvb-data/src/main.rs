@@ -18,9 +18,10 @@ use clap::{Parser, Subcommand};
 use serde_json::Value;
 
 use data_dir::{LoadedDocument, load_documents};
-use signing::{SigningKey, sign_document, verify_document};
+use signing::{PrivateKey, PublicKey, sign_document, verify_document};
 
-const KEY_VARIABLE: &str = "PVB_SIGNING_KEY";
+const PRIVATE_KEY_VARIABLE: &str = "PVB_SIGNING_KEY";
+const DEFAULT_PUBLIC_KEY_FILE: &str = "config/data-public-key.txt";
 
 #[derive(Parser)]
 #[command(name = "pvb-data", about = "Validates and signs the exam data in the data folder.")]
@@ -43,11 +44,15 @@ enum Command {
         #[arg(long, default_value = "data-build/signed-documents.json")]
         out: PathBuf,
     },
-    /// Check every signature in a signed file with PVB_SIGNING_KEY.
+    /// Check every signature in a signed file with the public key.
     Verify {
         #[arg(long, default_value = "data-build/signed-documents.json")]
         input: PathBuf,
+        #[arg(long, default_value = DEFAULT_PUBLIC_KEY_FILE)]
+        public_key_file: PathBuf,
     },
+    /// Print the public key that matches PVB_SIGNING_KEY.
+    PublicKey,
 }
 
 fn main() -> ExitCode {
@@ -64,14 +69,23 @@ fn run(cli: Cli) -> Result<()> {
     match cli.command {
         Command::Validate { data_dir } => validate_all(&data_dir).map(|_| ()),
         Command::Sign { data_dir, out } => sign_all(&data_dir, &out),
-        Command::Verify { input } => verify_all(&input),
+        Command::Verify { input, public_key_file } => verify_all(&input, &public_key_file),
+        Command::PublicKey => {
+            println!("{}", read_private_key()?.public_key().to_hex());
+            Ok(())
+        }
     }
 }
 
-fn read_key() -> Result<SigningKey> {
-    let value = std::env::var(KEY_VARIABLE)
-        .with_context(|| format!("{KEY_VARIABLE} is not set; load it from .env.local before running"))?;
-    Ok(SigningKey::from_hex(value.trim())?)
+fn read_private_key() -> Result<PrivateKey> {
+    let value = std::env::var(PRIVATE_KEY_VARIABLE)
+        .with_context(|| format!("{PRIVATE_KEY_VARIABLE} is not set; run through `npm run data` so .env.local is loaded"))?;
+    Ok(PrivateKey::from_hex(value.trim())?)
+}
+
+fn read_public_key(path: &Path) -> Result<PublicKey> {
+    let text = fs::read_to_string(path).with_context(|| format!("could not read {}", path.display()))?;
+    Ok(PublicKey::from_hex(text.trim())?)
 }
 
 fn validate_all(data_dir: &Path) -> Result<Vec<LoadedDocument>> {
@@ -102,7 +116,7 @@ fn validate_all(data_dir: &Path) -> Result<Vec<LoadedDocument>> {
 
 fn sign_all(data_dir: &Path, out: &Path) -> Result<()> {
     let documents = validate_all(data_dir)?;
-    let key = read_key()?;
+    let key = read_private_key()?;
 
     let mut signed: Vec<Value> = Vec::with_capacity(documents.len());
     for document in documents {
@@ -121,11 +135,11 @@ fn sign_all(data_dir: &Path, out: &Path) -> Result<()> {
     Ok(())
 }
 
-fn verify_all(input: &Path) -> Result<()> {
+fn verify_all(input: &Path, public_key_file: &Path) -> Result<()> {
     let text = fs::read_to_string(input).with_context(|| format!("could not read {}", input.display()))?;
     let documents: Vec<Value> =
         serde_json::from_str(&text).with_context(|| format!("{} must be a JSON list", input.display()))?;
-    let key = read_key()?;
+    let key = read_public_key(public_key_file)?;
 
     let mut invalid = 0usize;
     for (index, document) in documents.iter().enumerate() {

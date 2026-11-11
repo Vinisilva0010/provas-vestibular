@@ -1,6 +1,7 @@
 {
-  "description": "Shared signing vectors. The key is public and for tests only. Values were computed independently with Python: json.dumps(sort_keys=True, separators=(',', ':'), ensure_ascii=False) and HMAC-SHA256.",
-  "keyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "description": "Shared Ed25519 signing vectors. The key is public and for tests only. Values were computed independently with Python 'cryptography' (Ed25519PrivateKey.from_private_bytes) over json.dumps(sort_keys=True, separators=(',', ':'), ensure_ascii=False).",
+  "privateKeySeedHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "publicKeyHex": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8",
   "vectors": [
     {
       "name": "ascii-sorted-keys",
@@ -12,7 +13,7 @@
         "editionYear": 2027
       },
       "canonical": "{\"editionYear\":2027,\"hasStudyPlan\":true,\"id\":\"pvb-exam-fuvest\",\"states\":[\"SP\"],\"type\":\"exam\"}",
-      "signature": "97eea2d1a7960abd1b264f15a76f0603601c77a733f236563ca341cdc2d47b9f"
+      "signature": "a87cc228131c663338df94e4017fdb9f353ab5f56e66af0e14156488c7f8cd2be8a86eb0c786c4dc9cd29181e0417a308ca844b30e77af1280865ea40a8e970e"
     },
     {
       "name": "unicode-and-escapes",
@@ -21,7 +22,7 @@
         "label": "1ª fase \"oficial\"\nlinha 2"
       },
       "canonical": "{\"label\":\"1ª fase \\\"oficial\\\"\\nlinha 2\",\"name\":\"Unicamp — São Paulo\"}",
-      "signature": "65d5fdbccfb4b5e3b6d0e46ff85b1f9caf25f093ad9540746d3efaadc6a3dd04"
+      "signature": "5aaef5bd565c79413bb835d24b9d8cb4973d7eb9abda6a656e18c27b32d0bab34a36860d768c09e85d3dfa9d6576f1ef53026712c7f7ff9fb341d2f64e433e0b"
     },
     {
       "name": "nested-null-empty",
@@ -30,7 +31,7 @@
         "a": { "z": null, "y": 0, "x": -5 }
       },
       "canonical": "{\"a\":{\"x\":-5,\"y\":0,\"z\":null},\"b\":[]}",
-      "signature": "79a6bd2804c3b7eb03d4707a5da5a1ed821f27bdaeaf19b7c9601f683906782e"
+      "signature": "3e43e3903e5ef058360c1062b367073c610ee4b07106e63f6a4512f514dc8409dcb31879f25e7310e897e270bca5c85242ba4fcb7a7e29aa6b64bc944af38300"
     }
   ]
 }
