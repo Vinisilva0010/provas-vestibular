@@ -1,4 +1,4 @@
-//! pvb-data: validates and signs the exam data before it is sent to the database.
+//! pvb-data: validates, signs and uploads the exam data.
 
 mod canonical;
 mod data_dir;
@@ -6,12 +6,15 @@ mod dates;
 mod domains;
 mod ids;
 mod model;
+mod push;
 mod signing;
+mod store;
 
 use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
@@ -19,12 +22,15 @@ use serde_json::Value;
 
 use data_dir::{LoadedDocument, load_documents};
 use signing::{PrivateKey, PublicKey, sign_document, verify_document};
+use store::TechnoworksStore;
 
 const PRIVATE_KEY_VARIABLE: &str = "PVB_SIGNING_KEY";
+const RA_VARIABLE: &str = "PVB_TECHNOWORKS_RA";
+const INDEX_REF_VARIABLE: &str = "PVB_INDEX_REF";
 const DEFAULT_PUBLIC_KEY_FILE: &str = "config/data-public-key.txt";
 
 #[derive(Parser)]
-#[command(name = "pvb-data", about = "Validates and signs the exam data in the data folder.")]
+#[command(name = "pvb-data", about = "Validates, signs and uploads the exam data.")]
 struct Cli {
     #[command(subcommand)]
     command: Command,
@@ -51,6 +57,13 @@ enum Command {
         #[arg(long, default_value = DEFAULT_PUBLIC_KEY_FILE)]
         public_key_file: PathBuf,
     },
+    /// Validate, sign and upload every exam bundle, then update the index.
+    Push {
+        #[arg(long, default_value = "data")]
+        data_dir: PathBuf,
+        #[arg(long, default_value = DEFAULT_PUBLIC_KEY_FILE)]
+        public_key_file: PathBuf,
+    },
     /// Print the public key that matches PVB_SIGNING_KEY.
     PublicKey,
 }
@@ -70,6 +83,7 @@ fn run(cli: Cli) -> Result<()> {
         Command::Validate { data_dir } => validate_all(&data_dir).map(|_| ()),
         Command::Sign { data_dir, out } => sign_all(&data_dir, &out),
         Command::Verify { input, public_key_file } => verify_all(&input, &public_key_file),
+        Command::Push { data_dir, public_key_file } => push_all(&data_dir, &public_key_file),
         Command::PublicKey => {
             println!("{}", read_private_key()?.public_key().to_hex());
             Ok(())
@@ -77,10 +91,14 @@ fn run(cli: Cli) -> Result<()> {
     }
 }
 
+fn required_env(name: &str) -> Result<String> {
+    let value = std::env::var(name)
+        .with_context(|| format!("{name} is not set; run through `npm run data` so .env.local is loaded"))?;
+    Ok(value.trim().to_string())
+}
+
 fn read_private_key() -> Result<PrivateKey> {
-    let value = std::env::var(PRIVATE_KEY_VARIABLE)
-        .with_context(|| format!("{PRIVATE_KEY_VARIABLE} is not set; run through `npm run data` so .env.local is loaded"))?;
-    Ok(PrivateKey::from_hex(value.trim())?)
+    Ok(PrivateKey::from_hex(&required_env(PRIVATE_KEY_VARIABLE)?)?)
 }
 
 fn read_public_key(path: &Path) -> Result<PublicKey> {
@@ -154,5 +172,39 @@ fn verify_all(input: &Path, public_key_file: &Path) -> Result<()> {
         bail!("{invalid} of {} document(s) failed verification", documents.len());
     }
     println!("{} signature(s) valid.", documents.len());
+    Ok(())
+}
+
+fn push_all(data_dir: &Path, public_key_file: &Path) -> Result<()> {
+    let documents: Vec<Value> = validate_all(data_dir)?.into_iter().map(|document| document.value).collect();
+    let private_key = read_private_key()?;
+    let public_key = read_public_key(public_key_file)?;
+    if private_key.public_key().to_hex() != public_key.to_hex() {
+        bail!("{} does not match {PRIVATE_KEY_VARIABLE}", public_key_file.display());
+    }
+
+    let bundles = push::build_bundles(documents, &private_key)?;
+    let store = TechnoworksStore::new(&required_env(RA_VARIABLE)?)?;
+    let index_ref = std::env::var(INDEX_REF_VARIABLE).ok().map(|value| value.trim().to_string()).filter(|value| !value.is_empty());
+    let generated_at = i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs())?;
+
+    let report = push::push(&store, &private_key, &public_key, &bundles, index_ref.as_deref(), generated_at)?;
+
+    for warning in &report.warnings {
+        eprintln!("warning: {warning}");
+    }
+    println!(
+        "{} bundle(s): {} uploaded, {} unchanged, {} old bundle(s) deleted.",
+        bundles.len(),
+        report.created,
+        report.reused,
+        report.deleted
+    );
+    if report.index_created {
+        println!("A new index was created. Add this line to .env.local and to the Vercel settings:");
+        println!("{INDEX_REF_VARIABLE}={}", report.index_ref);
+    } else {
+        println!("Index {} updated.", report.index_ref);
+    }
     Ok(())
 }
