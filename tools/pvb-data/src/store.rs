@@ -151,6 +151,18 @@ pub mod memory {
             self.items.borrow().len()
         }
 
+        /// Every item as the API would return it, keyed by reference.
+        pub fn snapshot(&self) -> BTreeMap<String, Value> {
+            let references: Vec<String> = self.items.borrow().keys().cloned().collect();
+            references
+                .into_iter()
+                .map(|reference| {
+                    let item = self.get(&reference).unwrap().unwrap();
+                    (reference, item)
+                })
+                .collect()
+        }
+
         pub fn contains(&self, reference: &str) -> bool {
             self.items.borrow().contains_key(reference)
         }
