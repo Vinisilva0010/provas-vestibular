@@ -55,7 +55,7 @@ export function buildExamView(dataset: Dataset, slug: string): ExamView | null {
 }
 
 /** Dates that have not ended yet, with a countdown in plain Portuguese. */
-export function upcomingDates(items: DateItem[], todayIsoDate: string): UpcomingDate[] {
+export function upcomingDates<T extends DateItem>(items: T[], todayIsoDate: string): (T & { countdown: string })[] {
   const today = toEpochDay(todayIsoDate);
   return items
     .flatMap((item) => {

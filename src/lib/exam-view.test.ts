@@ -101,3 +101,13 @@ describe("phaseFacts", () => {
     expect(phaseFacts({})).toEqual([]);
   });
 });
+
+describe("upcomingDates with extra fields", () => {
+  it("keeps every field of each item", () => {
+    const [first] = upcomingDates(
+      [{ id: "a", label: "A", startDate: "2026-12-01", examSlug: "fuvest", examName: "Fuvest" }],
+      "2026-11-30",
+    );
+    expect(first).toMatchObject({ examSlug: "fuvest", examName: "Fuvest", countdown: "Amanhã" });
+  });
+});
