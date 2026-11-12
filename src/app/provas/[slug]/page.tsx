@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AddToCalendar } from "@/components/exam/add-to-calendar";
 import { CalendarTab } from "@/components/exam/calendar-tab";
 import { DocumentsTab } from "@/components/exam/documents-tab";
 import { NextDates } from "@/components/exam/next-dates";
@@ -55,6 +56,7 @@ export default async function ExamPage({ params }: Props) {
             <a href={exam.officialSiteUrl} target="_blank" rel="noopener noreferrer" className={buttonClasses()}>
               Site oficial
             </a>
+            <AddToCalendar examName={exam.shortName} examSlug={exam.slug} items={dateItems} />
             <ButtonLink href="/provas" variant="secondary">
               Outras provas
             </ButtonLink>

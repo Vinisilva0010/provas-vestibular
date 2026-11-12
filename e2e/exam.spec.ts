@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
 test("the exam list links to each exam page", async ({ page }) => {
@@ -34,4 +35,15 @@ test("an unknown exam shows the not-found page and is not indexed", async ({ pag
   await page.goto("/provas/prova-que-nao-existe");
   await expect(page.getByText("Essa página não existe")).toBeVisible();
   await expect(page.locator('meta[name="robots"][content*="noindex"]').first()).toBeAttached();
+});
+
+test("the exam page downloads its dates for a calendar app", async ({ page }) => {
+  await page.goto("/provas/fuvest");
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Adicionar à minha agenda" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("fuvest-datas.ics");
+  const content = readFileSync(await download.path(), "utf8");
+  expect(content).toContain("BEGIN:VCALENDAR");
+  expect(content).toContain("BEGIN:VEVENT");
 });
