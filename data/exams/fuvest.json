@@ -1,0 +1,18 @@
+{
+  "id": "pvb-exam-fuvest",
+  "type": "exam",
+  "slug": "fuvest",
+  "officialName": "Vestibular da USP (Fuvest)",
+  "shortName": "Fuvest",
+  "institution": "Universidade de São Paulo (USP), com o vestibular organizado pela Fundação Universitária para o Vestibular (Fuvest)",
+  "examFormat": "mixed",
+  "hasStudyPlan": true,
+  "states": ["SP"],
+  "audience": "Quem concluiu ou vai concluir o ensino médio e quer uma vaga nos cursos de graduação da USP",
+  "summary": "Vestibular da USP em duas fases: a 1ª com 80 questões de múltipla escolha em um dia, e a 2ª com provas discursivas e redação em dois dias. Cursos de Música, Artes Cênicas e Artes Visuais têm também provas de competências específicas.",
+  "officialSiteUrl": "https://www.fuvest.br/vestibular-da-usp",
+  "sourceName": "Fuvest — página oficial do Vestibular da USP",
+  "sourceUrl": "https://www.fuvest.br/vestibular-da-usp",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}
