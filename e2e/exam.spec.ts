@@ -28,7 +28,10 @@ test("every tab shows where its information came from", async ({ page }) => {
   await expect(page.getByRole("tabpanel", { name: "Visão geral" })).toContainText("Conferido em");
 });
 
-test("an unknown exam returns 404", async ({ page }) => {
-  const response = await page.goto("/provas/prova-que-nao-existe");
-  expect(response?.status()).toBe(404);
+// Exam pages stream, so an unknown slug may answer 200 with the not-found page.
+// Next.js then adds a noindex tag, which keeps the URL out of search engines.
+test("an unknown exam shows the not-found page and is not indexed", async ({ page }) => {
+  await page.goto("/provas/prova-que-nao-existe");
+  await expect(page.getByText("Essa página não existe")).toBeVisible();
+  await expect(page.locator('meta[name="robots"][content*="noindex"]').first()).toBeAttached();
 });
