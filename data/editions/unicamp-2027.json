@@ -1,0 +1,26 @@
+{
+  "id": "pvb-edition-unicamp-2027",
+  "type": "edition",
+  "examSlug": "unicamp",
+  "editionYear": 2027,
+  "howItWorks": "A inscrição é feita só pela internet, no site da Comvest. As duas fases são de manhã, com início às 9h: a 1ª fase em um dia e a 2ª em dois dias. Estudantes de escola pública podem optar pelo PAAIS, que dá bônus na nota, e pelas cotas étnico-raciais; quem faz essa escolha também fica inscrito de graça no Enem-Unicamp. As vagas são preenchidas em até sete chamadas, com matrícula virtual.",
+  "vacanciesApprox": 2523,
+  "vacanciesNote": "2.523 vagas em 70 opções de curso no Vestibular Unicamp.",
+  "feeCents": 23000,
+  "documents": [
+    {
+      "label": "Resolução do Vestibular Unicamp 2027 (regras do vestibular)",
+      "url": "https://www.comvest.unicamp.br/wp-content/uploads/2026/07/Resolucao-Vestibular-Unicamp-2027.pdf",
+      "kind": "notice"
+    },
+    {
+      "label": "Isenção da taxa 2027",
+      "url": "https://www.comvest.unicamp.br/ingresso-2027/vestibular-2027/isencao-2027/",
+      "kind": "exemption-rules"
+    }
+  ],
+  "sourceName": "Portal Unicamp — abertura das inscrições do Vestibular 2027",
+  "sourceUrl": "https://www.unicamp.br/noticias/2026/08/03/unicamp-abre-as-inscricoes-para-o-vestibular-2027-com-dois-novos-cursos-e-duas-novas-cidades-de-prova/",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}

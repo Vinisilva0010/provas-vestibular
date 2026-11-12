@@ -1,0 +1,18 @@
+{
+  "id": "pvb-exam-unicamp",
+  "type": "exam",
+  "slug": "unicamp",
+  "officialName": "Vestibular Unicamp",
+  "shortName": "Unicamp",
+  "institution": "Universidade Estadual de Campinas (Unicamp), com o vestibular organizado pela Comissão Permanente para os Vestibulares (Comvest)",
+  "examFormat": "mixed",
+  "hasStudyPlan": true,
+  "states": ["SP"],
+  "audience": "Quem concluiu ou vai concluir o ensino médio e quer uma vaga nos cursos de graduação da Unicamp",
+  "summary": "Vestibular da Unicamp em duas fases: a 1ª com 72 questões de múltipla escolha em um dia, e a 2ª em dois dias. Cursos de Música, Artes Cênicas, Artes Visuais e Dança têm também provas de habilidades específicas.",
+  "officialSiteUrl": "https://www.comvest.unicamp.br/ingresso-2027/vestibular-2027/",
+  "sourceName": "Portal Unicamp — primeira fase do Vestibular 2027",
+  "sourceUrl": "https://www.unicamp.br/noticias/2026/10/18/primeira-fase-do-vestibular-registra-abstencao-de-638-a-menor-em-16-anos/",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}

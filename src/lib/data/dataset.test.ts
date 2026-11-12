@@ -212,15 +212,9 @@ describe("loadDataset", () => {
   });
 });
 
-const sharedBases = readFixture("documents.json") as { bases: Record<string, Doc> };
-
 describe("loadDataset with editions and structures", () => {
-  it("loads editions and structures that belong to the bundle", async () => {
-    const items = cloneItems();
-    rewrite(items, {
-      documents: (documents) => [...documents, sharedBases.bases.edition as Doc, sharedBases.bases.structure as Doc],
-    });
-    const dataset = await load(items);
+  it("loads the edition and structure produced by the Rust tool", async () => {
+    const dataset = await load(cloneItems());
     expect(dataset.editions.map((edition) => edition.id)).toEqual(["pvb-edition-fuvest-2027"]);
     expect(dataset.structures.map((structure) => structure.id)).toEqual(["pvb-structure-fuvest-2027"]);
   });
@@ -228,7 +222,8 @@ describe("loadDataset with editions and structures", () => {
   it("fails when a signed edition breaks the rules", async () => {
     const items = cloneItems();
     rewrite(items, {
-      documents: (documents) => [...documents, { ...(sharedBases.bases.edition as Doc), feeCents: -1 }],
+      documents: (documents) =>
+        documents.map((document) => (document.type === "edition" ? { ...document, feeCents: -1 } : document)),
     });
     await expect(load(items)).rejects.toThrow('Edition in Bundle "fuvest" is invalid');
   });
@@ -236,10 +231,12 @@ describe("loadDataset with editions and structures", () => {
   it("fails when a structure belongs to another exam", async () => {
     const items = cloneItems();
     rewrite(items, {
-      documents: (documents) => [
-        ...documents,
-        { ...(sharedBases.bases.structure as Doc), examSlug: "unicamp", id: "pvb-structure-unicamp-2027" },
-      ],
+      documents: (documents) =>
+        documents.map((document) =>
+          document.type === "structure"
+            ? { ...document, examSlug: "unicamp", id: "pvb-structure-unicamp-2027" }
+            : document,
+        ),
     });
     await expect(load(items)).rejects.toThrow('A structure in Bundle "fuvest" belongs to another exam.');
   });

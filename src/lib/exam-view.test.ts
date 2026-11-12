@@ -84,8 +84,8 @@ describe("upcomingDates", () => {
     const result = upcomingDates(items, "2026-11-11");
     expect(result.map((item) => [item.id, item.countdown])).toEqual([
       ["ongoing", "Acontecendo agora"],
-      ["today", "É hoje"],
       ["starts-today", "Começa hoje"],
+      ["today", "É hoje"],
       ["tomorrow", "Amanhã"],
       ["later", "Faltam 12 dias"],
     ]);
