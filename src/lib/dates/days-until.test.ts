@@ -48,3 +48,11 @@ describe("daysUntil", () => {
     expect(() => daysUntil("2026-11-11", new Date("invalid"))).toThrow(RangeError);
   });
 });
+
+describe("todayInExamTimeZone", () => {
+  it("returns the calendar date in Brasília", async () => {
+    const { todayInExamTimeZone } = await import("./days-until");
+    expect(todayInExamTimeZone(new Date("2026-11-12T02:30:00Z"))).toBe("2026-11-11");
+    expect(todayInExamTimeZone(new Date("2026-11-12T03:30:00Z"))).toBe("2026-11-12");
+  });
+});
