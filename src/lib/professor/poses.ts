@@ -1,4 +1,13 @@
-export type ProfessorPose = "point-right" | "point-left" | "sitting" | "angry";
+export type ProfessorPose =
+  | "point-right"
+  | "point-left"
+  | "sitting"
+  | "angry"
+  | "thinking"
+  | "celebrating"
+  | "calendar"
+  | "reading"
+  | "waving";
 
 export type PoseConfig = {
   /** Portuguese description, shown in the development placeholder. */
@@ -9,25 +18,20 @@ export type PoseConfig = {
   available: boolean;
 };
 
+const pose = (name: ProfessorPose, label: string): PoseConfig => ({
+  label,
+  src: `/professor/${name}.png`,
+  available: true,
+});
+
 export const professorPoses: Record<ProfessorPose, PoseConfig> = {
-  "point-right": {
-    label: "apontando para a direita",
-    src: "/professor/point-right.png",
-    available: false,
-  },
-  "point-left": {
-    label: "apontando para a esquerda",
-    src: "/professor/point-left.png",
-    available: false,
-  },
-  sitting: {
-    label: "sentado",
-    src: "/professor/sitting.png",
-    available: false,
-  },
-  angry: {
-    label: "cara de bravo",
-    src: "/professor/angry.png",
-    available: false,
-  },
+  "point-right": pose("point-right", "apontando para a direita"),
+  "point-left": pose("point-left", "apontando para a esquerda"),
+  sitting: pose("sitting", "sentado"),
+  angry: pose("angry", "cara de bravo"),
+  thinking: pose("thinking", "pensando"),
+  celebrating: pose("celebrating", "comemorando"),
+  calendar: pose("calendar", "segurando o calendário"),
+  reading: pose("reading", "lendo um livro"),
+  waving: pose("waving", "acenando"),
 };

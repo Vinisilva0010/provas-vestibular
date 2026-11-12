@@ -66,7 +66,7 @@ export default async function ExamPage({ params }: Props) {
         <div className="relative mx-auto w-full max-w-md lg:max-w-none">
           <div
             aria-hidden="true"
-            className="absolute -top-6 right-0 aspect-square w-48 rounded-full border-4 border-ink bg-sun sm:w-64"
+            className="absolute -top-6 right-0 hidden aspect-square w-64 rounded-full border-4 border-ink bg-sun sm:block"
           />
           <div className="relative flex flex-col items-center gap-5 sm:flex-row sm:items-end">
             <Professor pose="point-left" size="lg" />

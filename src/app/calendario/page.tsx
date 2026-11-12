@@ -14,7 +14,7 @@ export default async function CalendarPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-5 pt-10">
-      <div className="flex flex-col-reverse gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="display-type text-[clamp(3rem,9vw,7rem)] leading-[0.88]">Calendário</h1>
           <p className="mt-4 max-w-2xl text-xl">
@@ -22,7 +22,7 @@ export default async function CalendarPage() {
             prova de cada vez.
           </p>
         </div>
-        <Professor pose="point-left" size="lg" />
+        <Professor pose="calendar" size="lg" className="self-center sm:self-end" />
       </div>
       <div className="mt-10">
         <CalendarBoard calendar={calendar} />
