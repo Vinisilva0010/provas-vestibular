@@ -1,0 +1,99 @@
+{
+  "id": "pvb-structure-fuvest-2027",
+  "type": "structure",
+  "examSlug": "fuvest",
+  "editionYear": 2027,
+  "phases": [
+    {
+      "key": "phase-1",
+      "label": "1ª fase",
+      "format": "objective",
+      "days": 1,
+      "durationMinutesPerDay": 300,
+      "questionCount": 80,
+      "maxScore": 100,
+      "subjects": [
+        "Arte",
+        "Biologia",
+        "Educação Física",
+        "Filosofia",
+        "Física",
+        "Geografia",
+        "História",
+        "Inglês",
+        "Matemática",
+        "Português",
+        "Química",
+        "Sociologia"
+      ],
+      "notes": [
+        "Cada questão tem cinco alternativas, só uma correta, e vale 1 ponto.",
+        "Algumas questões são interdisciplinares.",
+        "Vão para a 2ª fase até 4 candidatos por vaga de cada carreira e modalidade, pela ordem de acertos; quem empatar com o último convocado também vai."
+      ]
+    },
+    {
+      "key": "phase-2",
+      "label": "2ª fase",
+      "format": "essay",
+      "days": 2,
+      "durationMinutesPerDay": 240,
+      "questionCount": 22,
+      "maxScore": 200,
+      "subjects": [
+        "Português (interpretação de textos, gramática e literatura, incluindo as obras de leitura obrigatória)",
+        "Redação",
+        "De 2 a 4 disciplinas específicas da carreira"
+      ],
+      "notes": [
+        "1º dia: 10 questões discursivas de Português (50 pontos) e uma redação (50 pontos).",
+        "2º dia: 12 questões discursivas das disciplinas da carreira (100 pontos).",
+        "Quem não escolher uma das propostas de redação fica com nota zero na redação."
+      ]
+    },
+    {
+      "key": "specific-skills",
+      "label": "Competências específicas",
+      "format": "skills",
+      "maxScore": 100,
+      "subjects": ["Prova elaborada pela unidade da USP que oferece o curso (Música, Artes Cênicas ou Artes Visuais)"],
+      "notes": [
+        "Só para Artes Cênicas, Artes Visuais e Música.",
+        "Classificatória e eliminatória: é preciso tirar pelo menos 50%.",
+        "Pode cobrar conteúdo fora do currículo obrigatório do ensino médio."
+      ]
+    }
+  ],
+  "scoring": [
+    "Cada fase é levada para base 100, e a nota final é convertida para a escala de 1.000 pontos, com duas casas decimais.",
+    "Carreiras sem competências específicas: nota final = (1ª fase + 1º dia da 2ª fase + 2º dia da 2ª fase) ÷ 3.",
+    "Carreiras com competências específicas: a nota dessa prova também entra na média; a fórmula exata está na página 13 do Guia de Provas."
+  ],
+  "eliminationRules": [
+    "Acertar menos de 30% da 1ª fase (menos de 24 questões).",
+    "Tirar zero na redação ou em qualquer um dos dias da 2ª fase.",
+    "Errar todas as questões de um dos dias da 2ª fase.",
+    "Tirar menos de 50% na prova de competências específicas."
+  ],
+  "quotas": [
+    {
+      "key": "ampla-concorrencia",
+      "label": "Ampla concorrência",
+      "description": "Todas as pessoas inscritas na carreira disputam estas vagas, inclusive quem tem direito a vaga reservada."
+    },
+    {
+      "key": "escola-publica",
+      "label": "Escola pública",
+      "description": "Vagas preenchidas por quem se inscreveu nas modalidades de escola pública ou de pretos, pardos e indígenas, conforme a nota."
+    },
+    {
+      "key": "ppi",
+      "label": "Pretos, pardos e indígenas (PPI)",
+      "description": "Vagas preenchidas por quem se inscreveu nesta modalidade, conforme a nota."
+    }
+  ],
+  "sourceName": "Fuvest — Guia de Provas 2027",
+  "sourceUrl": "https://www.fuvest.br/wp-content/uploads/fuvest2027-guia-provas.pdf",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}

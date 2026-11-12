@@ -194,11 +194,12 @@ fn push_all(data_dir: &Path, public_key_file: &Path) -> Result<()> {
         eprintln!("warning: {warning}");
     }
     println!(
-        "{} bundle(s): {} uploaded, {} unchanged, {} old bundle(s) deleted.",
+        "{} bundle(s): {} uploaded, {} unchanged, {} old bundle(s) deleted, {} leftover bundle(s) removed.",
         bundles.len(),
         report.created,
         report.reused,
-        report.deleted
+        report.deleted,
+        report.orphans_removed
     );
     if report.index_created {
         println!("A new index was created. Add this line to .env.local and to the Vercel settings:");

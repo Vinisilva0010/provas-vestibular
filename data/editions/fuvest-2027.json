@@ -1,0 +1,69 @@
+{
+  "id": "pvb-edition-fuvest-2027",
+  "type": "edition",
+  "examSlug": "fuvest",
+  "editionYear": 2027,
+  "howItWorks": "A inscrição é feita no site da Fuvest. A 1ª fase tem 80 questões de múltipla escolha; vai para a 2ª fase quem acerta pelo menos 30% e fica entre os mais bem colocados da sua carreira e modalidade de vaga. A 2ª fase tem questões discursivas e redação, em dois dias. A nota final junta as fases (e as competências específicas, quando o curso exige), e as vagas são preenchidas em chamadas com lista de espera.",
+  "vacanciesApprox": 8000,
+  "vacanciesNote": "Mais de 8.000 vagas nos cursos de graduação da USP.",
+  "feeCents": 22800,
+  "documents": [
+    {
+      "label": "Resolução CoG nº 9008 (regras do vestibular)",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-resolucao-DOE.pdf",
+      "kind": "notice",
+      "publishedOn": "2026-07-31"
+    },
+    {
+      "label": "Retificação da Resolução CoG nº 9008",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-retificacao-DOE-2026-08-27.pdf",
+      "kind": "notice-amendment",
+      "publishedOn": "2026-08-27"
+    },
+    {
+      "label": "Guia de Provas",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-guia-provas.pdf",
+      "kind": "guide",
+      "publishedOn": "2026-08-17"
+    },
+    {
+      "label": "Guia de Jornada",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-guia-jornada.pdf",
+      "kind": "guide",
+      "publishedOn": "2026-08-10"
+    },
+    {
+      "label": "Guia de Carreiras",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-guia-carreiras.pdf",
+      "kind": "careers",
+      "publishedOn": "2026-08-03"
+    },
+    {
+      "label": "Guia de Inclusão",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-guia-inclusao.pdf",
+      "kind": "accessibility",
+      "publishedOn": "2026-05-04"
+    },
+    {
+      "label": "Regulamento para isenção ou redução de taxa",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-regulamento-isencao-reducao.pdf",
+      "kind": "exemption-rules",
+      "publishedOn": "2026-05-04"
+    },
+    {
+      "label": "Programa do Vestibular 2027 (conteúdo cobrado)",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-programa-vestibular.pdf",
+      "kind": "syllabus"
+    },
+    {
+      "label": "Gabarito retificado da 1ª fase",
+      "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-fase1-gabarito-retificado.pdf",
+      "kind": "answer-key",
+      "publishedOn": "2026-11-04"
+    }
+  ],
+  "sourceName": "Fuvest — página oficial do Vestibular da USP",
+  "sourceUrl": "https://www.fuvest.br/vestibular-da-usp",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}

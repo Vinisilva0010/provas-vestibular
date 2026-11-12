@@ -7,6 +7,7 @@ const text = z.string().trim().min(1, "Must not be empty.");
 const slug = z.string().refine(isSlug, "Use lowercase letters, digits and single hyphens.");
 const isoDate = z.string().refine(isIsoDate, "Expected a real date in YYYY-MM-DD format.");
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Expected a time as HH:MM (24h).");
+const editionYear = z.number().int().min(2000).max(2100);
 const officialUrl = z
   .string()
   .refine(isOfficialUrl, "URL must be https and on an allowlisted official domain.");
@@ -26,6 +27,22 @@ export const regionCodes = [
   "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI",
   "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
 ] as const;
+
+function yearScopedIdCheck(type: "edition" | "structure") {
+  return (
+    document: { id: string; examSlug: string; editionYear: number },
+    ctx: z.RefinementCtx,
+  ) => {
+    const expected = tryBuildId(type, document.examSlug, String(document.editionYear));
+    if (document.id !== expected) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["id"],
+        message: `id must be pvb-${type}-<examSlug>-<editionYear>.`,
+      });
+    }
+  };
+}
 
 export const examSchema = z
   .strictObject({
@@ -70,7 +87,7 @@ export const eventSchema = z
     id: z.string(),
     type: z.literal("event"),
     examSlug: slug,
-    editionYear: z.number().int().min(2000).max(2100),
+    editionYear,
     key: slug,
     category: z.enum(eventCategories),
     /** Portuguese text shown on the site, e.g. "1ª fase". */
@@ -133,3 +150,84 @@ export const eventSchema = z
   });
 
 export type ExamEvent = z.infer<typeof eventSchema>;
+
+export const officialDocumentKinds = [
+  "notice",
+  "notice-amendment",
+  "guide",
+  "syllabus",
+  "exemption-rules",
+  "careers",
+  "accessibility",
+  "answer-key",
+  "other",
+] as const;
+
+/** One year of an exam: how it works, places, fee and the official documents of that year. */
+export const editionSchema = z
+  .strictObject({
+    id: z.string(),
+    type: z.literal("edition"),
+    examSlug: slug,
+    editionYear,
+    /** Short plain-language summary of the whole process. */
+    howItWorks: text,
+    vacanciesApprox: z.number().int().min(1).max(1_000_000).optional(),
+    vacanciesNote: text.optional(),
+    /** Registration fee in cents (R$ 228,00 = 22800), so no fractional numbers are stored. */
+    feeCents: z.number().int().min(0).max(1_000_000).optional(),
+    feeNote: text.optional(),
+    documents: z
+      .array(
+        z.strictObject({
+          label: text,
+          url: officialUrl,
+          kind: z.enum(officialDocumentKinds),
+          publishedOn: isoDate.optional(),
+        }),
+      )
+      .optional(),
+    ...provenance,
+  })
+  .superRefine(yearScopedIdCheck("edition"));
+
+export type Edition = z.infer<typeof editionSchema>;
+
+export const phaseFormats = ["objective", "essay", "mixed", "skills"] as const;
+
+const phaseSchema = z.strictObject({
+  key: slug,
+  label: text,
+  format: z.enum(phaseFormats),
+  days: z.number().int().min(1).max(10).optional(),
+  durationMinutesPerDay: z.number().int().min(1).max(24 * 60).optional(),
+  questionCount: z.number().int().min(1).max(1000).optional(),
+  maxScore: z.number().int().min(1).max(10_000).optional(),
+  subjects: z.array(text).min(1),
+  notes: z.array(text).optional(),
+});
+
+/** How one year of an exam is built: phases, scoring, elimination rules and quotas. */
+export const structureSchema = z
+  .strictObject({
+    id: z.string(),
+    type: z.literal("structure"),
+    examSlug: slug,
+    editionYear,
+    phases: z.array(phaseSchema).min(1),
+    scoring: z.array(text).min(1),
+    eliminationRules: z.array(text).optional(),
+    quotas: z.array(z.strictObject({ key: slug, label: text, description: text })).optional(),
+    tieBreak: text.optional(),
+    accessibility: z.array(text).optional(),
+    ...provenance,
+  })
+  .superRefine((structure, ctx) => {
+    yearScopedIdCheck("structure")(structure, ctx);
+    const keys = structure.phases.map((phase) => phase.key);
+    if (new Set(keys).size !== keys.length) {
+      ctx.addIssue({ code: "custom", path: ["phases"], message: "Phase keys must be unique." });
+    }
+  });
+
+export type ExamStructure = z.infer<typeof structureSchema>;

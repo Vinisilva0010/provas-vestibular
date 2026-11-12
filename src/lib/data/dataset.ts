@@ -1,7 +1,16 @@
 import "server-only";
 import type { KeyObject } from "node:crypto";
 import { z } from "zod";
-import { eventSchema, examSchema, type Exam, type ExamEvent } from "./schemas";
+import {
+  editionSchema,
+  eventSchema,
+  examSchema,
+  structureSchema,
+  type Edition,
+  type Exam,
+  type ExamEvent,
+  type ExamStructure,
+} from "./schemas";
 import { verifyDocument } from "./signing";
 import { DatasetError, stripServerFields, type FetchItem } from "./technoworks";
 
@@ -49,7 +58,11 @@ export type Dataset = {
   generatedAt: number;
   exams: Exam[];
   events: ExamEvent[];
+  editions: Edition[];
+  structures: ExamStructure[];
 };
+
+type Collections = Omit<Dataset, "generatedAt">;
 
 function describeIssues(error: z.ZodError): string {
   return error.issues
@@ -58,11 +71,26 @@ function describeIssues(error: z.ZodError): string {
     .join("; ");
 }
 
-async function loadBundle(
-  entry: IndexEntry,
-  fetchItem: FetchItem,
-  publicKey: KeyObject,
-): Promise<{ exams: Exam[]; events: ExamEvent[] }> {
+/** Parses one document and checks that it belongs to the bundle it came in. */
+function parseOwned<T>(
+  schema: z.ZodType<T>,
+  value: unknown,
+  names: { title: string; withArticle: string },
+  label: string,
+  bundleKey: string,
+  ownerOf: (document: T) => string,
+): T {
+  const result = schema.safeParse(value);
+  if (!result.success) {
+    throw new DatasetError(`${names.title} in ${label} is invalid: ${describeIssues(result.error)}`);
+  }
+  if (ownerOf(result.data) !== bundleKey) {
+    throw new DatasetError(`${names.withArticle} in ${label} belongs to another exam.`);
+  }
+  return result.data;
+}
+
+async function loadBundle(entry: IndexEntry, fetchItem: FetchItem, publicKey: KeyObject): Promise<Collections> {
   const label = `Bundle "${entry.key}"`;
   const raw = await fetchItem(entry.ref);
   if (!raw) {
@@ -85,42 +113,47 @@ async function loadBundle(
     throw new DatasetError(`${label} is labeled as a different exam.`);
   }
 
-  const exams: Exam[] = [];
-  const events: ExamEvent[] = [];
+  const collections: Collections = { exams: [], events: [], editions: [], structures: [] };
   for (const document of parsed.data.documents) {
     if (!verifyDocument(document, publicKey)) {
       throw new DatasetError(`A document in ${label} has an invalid signature.`);
     }
     const { signature: _signature, ...unsigned } = document;
+    const key = entry.key;
 
-    if (unsigned.type === "exam") {
-      const result = examSchema.safeParse(unsigned);
-      if (!result.success) {
-        throw new DatasetError(`Exam in ${label} is invalid: ${describeIssues(result.error)}`);
-      }
-      if (result.data.slug !== entry.key) {
-        throw new DatasetError(`An exam in ${label} belongs to another exam.`);
-      }
-      exams.push(result.data);
-    } else if (unsigned.type === "event") {
-      const result = eventSchema.safeParse(unsigned);
-      if (!result.success) {
-        throw new DatasetError(`Event in ${label} is invalid: ${describeIssues(result.error)}`);
-      }
-      if (result.data.examSlug !== entry.key) {
-        throw new DatasetError(`An event in ${label} belongs to another exam.`);
-      }
-      events.push(result.data);
-    } else {
-      throw new DatasetError(`${label} contains an unknown document type.`);
+    switch (unsigned.type) {
+      case "exam":
+        collections.exams.push(
+          parseOwned(examSchema, unsigned, { title: "Exam", withArticle: "An exam" }, label, key, (d) => d.slug),
+        );
+        break;
+      case "event":
+        collections.events.push(
+          parseOwned(eventSchema, unsigned, { title: "Event", withArticle: "An event" }, label, key, (d) => d.examSlug),
+        );
+        break;
+      case "edition":
+        collections.editions.push(
+          parseOwned(editionSchema, unsigned, { title: "Edition", withArticle: "An edition" }, label, key, (d) => d.examSlug),
+        );
+        break;
+      case "structure":
+        collections.structures.push(
+          parseOwned(structureSchema, unsigned, { title: "Structure", withArticle: "A structure" }, label, key, (d) => d.examSlug),
+        );
+        break;
+      default:
+        throw new DatasetError(`${label} contains an unknown document type.`);
     }
   }
 
-  if (exams.length !== 1) {
+  if (collections.exams.length !== 1) {
     throw new DatasetError(`${label} must contain exactly one exam.`);
   }
-  return { exams, events };
+  return collections;
 }
+
+const byId = (a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id);
 
 export async function loadDataset(options: {
   fetchItem: FetchItem;
@@ -152,13 +185,20 @@ export async function loadDataset(options: {
   }
 
   const parts = await Promise.all(entries.map((entry) => loadBundle(entry, fetchItem, publicKey)));
-  const exams = parts.flatMap((part) => part.exams).sort((a, b) => a.slug.localeCompare(b.slug));
-  const events = parts.flatMap((part) => part.events).sort((a, b) => a.id.localeCompare(b.id));
+  const dataset: Dataset = {
+    generatedAt: parsed.data.generatedAt,
+    exams: parts.flatMap((part) => part.exams).sort((a, b) => a.slug.localeCompare(b.slug)),
+    events: parts.flatMap((part) => part.events).sort(byId),
+    editions: parts.flatMap((part) => part.editions).sort(byId),
+    structures: parts.flatMap((part) => part.structures).sort(byId),
+  };
 
-  const ids = [...exams, ...events].map((document) => document.id);
+  const ids = [...dataset.exams, ...dataset.events, ...dataset.editions, ...dataset.structures].map(
+    (document) => document.id,
+  );
   if (new Set(ids).size !== ids.length) {
     throw new DatasetError("Two documents share the same id.");
   }
 
-  return { generatedAt: parsed.data.generatedAt, exams, events };
+  return dataset;
 }

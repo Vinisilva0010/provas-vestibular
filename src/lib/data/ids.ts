@@ -5,6 +5,7 @@ export const documentTypes = [
   "exam",
   "edition",
   "event",
+  "structure",
   "topic",
   "material",
   "course",

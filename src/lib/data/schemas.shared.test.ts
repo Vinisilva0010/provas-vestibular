@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { eventSchema, examSchema } from "./schemas";
+import { editionSchema, eventSchema, examSchema, structureSchema } from "./schemas";
 
-type Base = "exam" | "event";
+type Base = "exam" | "event" | "edition" | "structure";
 type Case = {
   name: string;
   base: Base;
@@ -17,7 +17,12 @@ const fixture = JSON.parse(
   readFileSync(join(process.cwd(), "test-vectors/documents.json"), "utf8"),
 ) as { bases: Record<Base, Record<string, unknown>>; cases: Case[] };
 
-const schemaFor = { exam: examSchema, event: eventSchema };
+const schemaFor = {
+  exam: examSchema,
+  event: eventSchema,
+  edition: editionSchema,
+  structure: structureSchema,
+};
 
 function buildDocument(testCase: Case): Record<string, unknown> {
   const document: Record<string, unknown> = { ...fixture.bases[testCase.base], ...testCase.patch };

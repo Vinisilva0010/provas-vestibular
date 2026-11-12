@@ -1,7 +1,8 @@
 //! Access to the Technoworks REST database (Firestore behind Cloud Functions).
 //! Facts checked against the live API: POST returns the new id in `dados.id`;
 //! a top-level "id" field in the body hides that id, so it is never sent;
-//! PATCH replaces whole top-level fields; GET adds `id`, `_criadoEm`, `_atualizadoEm`.
+//! PATCH replaces whole top-level fields; GET adds `id`, `_criadoEm`, `_atualizadoEm`;
+//! the server sometimes answers 502 and a retry succeeds; listing returns at most 100 items.
 
 use std::time::Duration;
 
@@ -10,12 +11,16 @@ use serde_json::Value;
 use ureq::Agent;
 
 pub const TECHNOWORKS_BASE_URL: &str = "https://technoworks.com.br";
+pub const LIST_LIMIT: usize = 100;
+const MAX_ATTEMPTS: u32 = 3;
 
 pub trait Store {
     fn get(&self, reference: &str) -> Result<Option<Value>>;
     fn create(&self, item: &Value) -> Result<String>;
     fn patch(&self, reference: &str, item: &Value) -> Result<()>;
     fn delete(&self, reference: &str) -> Result<()>;
+    /// Every item as the API returns it, up to LIST_LIMIT.
+    fn list(&self) -> Result<Vec<Value>>;
 }
 
 /// Firestore auto ids are short alphanumeric strings. Anything else is refused
@@ -51,6 +56,33 @@ pub fn ensure_writable(item: &Value) -> Result<()> {
     Ok(())
 }
 
+/// Gateway errors from the Cloud Function are temporary; everything else is final.
+pub fn is_transient(error: &ureq::Error) -> bool {
+    matches!(error, ureq::Error::StatusCode(502 | 503 | 504))
+}
+
+/// Runs an operation that is safe to repeat, retrying temporary failures.
+/// Never use it for POST: repeating a POST can create the same item twice.
+pub fn with_retry<T>(
+    mut operation: impl FnMut() -> Result<T, ureq::Error>,
+    pause: impl Fn(u32),
+) -> Result<T, ureq::Error> {
+    let mut attempt = 1;
+    loop {
+        match operation() {
+            Err(error) if attempt < MAX_ATTEMPTS && is_transient(&error) => {
+                pause(attempt);
+                attempt += 1;
+            }
+            result => return result,
+        }
+    }
+}
+
+fn backoff(attempt: u32) {
+    std::thread::sleep(Duration::from_secs(u64::from(attempt) * 2));
+}
+
 pub struct TechnoworksStore {
     agent: Agent,
     base: String,
@@ -83,7 +115,7 @@ fn data_field(body: Value) -> Result<Value> {
 impl Store for TechnoworksStore {
     fn get(&self, reference: &str) -> Result<Option<Value>> {
         let url = self.item_url(reference)?;
-        match self.agent.get(&url).call() {
+        match with_retry(|| self.agent.get(&url).call(), backoff) {
             Ok(mut response) => {
                 let body: Value = response.body_mut().read_json().context("could not read the item")?;
                 Ok(Some(data_field(body)?))
@@ -111,18 +143,26 @@ impl Store for TechnoworksStore {
     fn patch(&self, reference: &str, item: &Value) -> Result<()> {
         ensure_writable(item)?;
         let url = self.item_url(reference)?;
-        self.agent
-            .patch(&url)
-            .send_json(item)
+        with_retry(|| self.agent.patch(&url).send_json(item), backoff)
             .with_context(|| format!("PATCH of item {reference} failed"))?;
         Ok(())
     }
 
     fn delete(&self, reference: &str) -> Result<()> {
         let url = self.item_url(reference)?;
-        match self.agent.delete(&url).call() {
+        match with_retry(|| self.agent.delete(&url).call(), backoff) {
             Ok(_) | Err(ureq::Error::StatusCode(404)) => Ok(()),
             Err(error) => Err(error).with_context(|| format!("DELETE of item {reference} failed")),
+        }
+    }
+
+    fn list(&self) -> Result<Vec<Value>> {
+        let url = format!("{}?limite={LIST_LIMIT}", self.base);
+        let mut response = with_retry(|| self.agent.get(&url).call(), backoff).context("listing the database failed")?;
+        let body: Value = response.body_mut().read_json().context("could not read the listing")?;
+        match body.get("dados") {
+            Some(Value::Array(items)) => Ok(items.clone()),
+            _ => bail!("the listing has no 'dados' list"),
         }
     }
 }
@@ -144,6 +184,7 @@ pub mod memory {
         items: RefCell<BTreeMap<String, Value>>,
         next: Cell<u32>,
         pub fail_creates: Cell<bool>,
+        pub fail_patches: Cell<bool>,
     }
 
     impl MemoryStore {
@@ -197,6 +238,9 @@ pub mod memory {
 
         fn patch(&self, reference: &str, item: &Value) -> Result<()> {
             ensure_writable(item)?;
+            if self.fail_patches.get() {
+                bail!("simulated 502");
+            }
             let mut items = self.items.borrow_mut();
             let Some(existing) = items.get_mut(reference) else {
                 bail!("404");
@@ -211,11 +255,17 @@ pub mod memory {
             self.items.borrow_mut().remove(reference);
             Ok(())
         }
+
+        fn list(&self) -> Result<Vec<Value>> {
+            Ok(self.snapshot().into_values().collect())
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::cell::Cell;
+
     use super::*;
     use serde_json::json;
 
@@ -244,5 +294,48 @@ mod tests {
         assert!(ensure_writable(&json!({"id": "a"})).is_err());
         assert!(ensure_writable(&json!({"_x": 1})).is_err());
         assert!(ensure_writable(&json!([1])).is_err());
+    }
+
+    #[test]
+    fn retries_a_temporary_failure_then_succeeds() {
+        let calls = Cell::new(0);
+        let pauses = Cell::new(0);
+        let result = with_retry(
+            || {
+                calls.set(calls.get() + 1);
+                if calls.get() == 1 { Err(ureq::Error::StatusCode(502)) } else { Ok("ok") }
+            },
+            |_| pauses.set(pauses.get() + 1),
+        );
+        assert_eq!(result.unwrap(), "ok");
+        assert_eq!((calls.get(), pauses.get()), (2, 1));
+    }
+
+    #[test]
+    fn does_not_retry_final_errors() {
+        let calls = Cell::new(0);
+        let result: Result<(), _> = with_retry(
+            || {
+                calls.set(calls.get() + 1);
+                Err(ureq::Error::StatusCode(404))
+            },
+            |_| {},
+        );
+        assert!(matches!(result, Err(ureq::Error::StatusCode(404))));
+        assert_eq!(calls.get(), 1);
+    }
+
+    #[test]
+    fn gives_up_after_three_attempts() {
+        let calls = Cell::new(0);
+        let result: Result<(), _> = with_retry(
+            || {
+                calls.set(calls.get() + 1);
+                Err(ureq::Error::StatusCode(503))
+            },
+            |_| {},
+        );
+        assert!(matches!(result, Err(ureq::Error::StatusCode(503))));
+        assert_eq!(calls.get(), 3);
     }
 }

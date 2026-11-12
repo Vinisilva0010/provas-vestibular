@@ -11,10 +11,11 @@ use serde_json::{Value, json};
 
 use crate::canonical::canonical_json;
 use crate::signing::{PrivateKey, PublicKey, sign_document, verify_document};
-use crate::store::{Store, strip_server_fields};
+use crate::store::{LIST_LIMIT, Store, strip_server_fields};
 
 pub const FORMAT_VERSION: i64 = 1;
 pub const INDEX_KEY: &str = "index";
+const BUNDLE_KEY_PREFIX: &str = "bundle-";
 /// Firestore allows 1 MiB per document; keep a safety margin.
 const MAX_ITEM_BYTES: usize = 900_000;
 
@@ -38,6 +39,7 @@ pub struct PushReport {
     pub created: usize,
     pub reused: usize,
     pub deleted: usize,
+    pub orphans_removed: usize,
     pub warnings: Vec<String>,
 }
 
@@ -74,7 +76,7 @@ pub fn build_bundles(documents: Vec<Value>, key: &PrivateKey) -> Result<Vec<Bund
         documents.sort_by(|a, b| a["id"].as_str().cmp(&b["id"].as_str()));
 
         let mut item = json!({
-            "pvbKey": format!("bundle-{bundle_key}"),
+            "pvbKey": format!("{BUNDLE_KEY_PREFIX}{bundle_key}"),
             "formatVersion": FORMAT_VERSION,
             "bundle": bundle_key.clone(),
             "documents": documents,
@@ -154,6 +156,44 @@ fn stored_bundle_matches(store: &impl Store, public_key: &PublicKey, entry: &Ind
     Ok(verify_document(&bundle, public_key) && bundle.get("signature").and_then(Value::as_str) == Some(expected))
 }
 
+/// Deletes bundles signed with our key that the current index does not use,
+/// such as leftovers from an upload that failed halfway. Anything not signed
+/// with our key is never touched.
+fn remove_orphan_bundles(
+    store: &impl Store,
+    public_key: &PublicKey,
+    keep: &HashSet<&str>,
+    warnings: &mut Vec<String>,
+) -> Result<usize> {
+    let items = store.list()?;
+    if items.len() >= LIST_LIMIT {
+        warnings.push(format!(
+            "the database listing returned {LIST_LIMIT} items, the maximum; some leftover bundles may not have been checked"
+        ));
+    }
+
+    let mut removed = 0;
+    for item in &items {
+        let Some(reference) = item.get("id").and_then(Value::as_str) else {
+            continue;
+        };
+        if keep.contains(reference) {
+            continue;
+        }
+        let data = strip_server_fields(item);
+        let is_our_bundle = data
+            .get("pvbKey")
+            .and_then(Value::as_str)
+            .is_some_and(|key| key.starts_with(BUNDLE_KEY_PREFIX))
+            && verify_document(&data, public_key);
+        if is_our_bundle {
+            store.delete(reference).with_context(|| format!("could not delete leftover bundle {reference}"))?;
+            removed += 1;
+        }
+    }
+    Ok(removed)
+}
+
 pub fn push(
     store: &impl Store,
     private_key: &PrivateKey,
@@ -224,7 +264,9 @@ pub fn push(
         }
     }
 
-    Ok(PushReport { index_ref, index_created, created, reused, deleted, warnings })
+    let orphans_removed = remove_orphan_bundles(store, public_key, &kept, &mut warnings)?;
+
+    Ok(PushReport { index_ref, index_created, created, reused, deleted, orphans_removed, warnings })
 }
 
 #[cfg(test)]
@@ -289,7 +331,7 @@ mod tests {
 
         let report = push(&store, &private_key, &public_key, &bundles, None, 100).unwrap();
         assert!(report.index_created);
-        assert_eq!((report.created, report.reused, report.deleted), (2, 0, 0));
+        assert_eq!((report.created, report.reused, report.deleted, report.orphans_removed), (2, 0, 0, 0));
         assert_eq!(index_entries(&store, &public_key, &report.index_ref).len(), 2);
         assert_eq!(store.len(), 3);
     }
@@ -341,6 +383,9 @@ mod tests {
         let (private_key, public_key) = keys();
         let store = MemoryStore::default();
         let foreign = store.create(&json!({"disciplina": "Matematica", "nota": 9})).unwrap();
+        let lookalike = store
+            .create(&json!({"pvbKey": "bundle-fake", "signature": "0".repeat(128)}))
+            .unwrap();
 
         let all = build_bundles(dataset("1ª fase", true), &private_key).unwrap();
         let first = push(&store, &private_key, &public_key, &all, None, 100).unwrap();
@@ -348,6 +393,7 @@ mod tests {
         push(&store, &private_key, &public_key, &fewer, Some(&first.index_ref), 200).unwrap();
 
         assert!(store.contains(&foreign));
+        assert!(store.contains(&lookalike), "an item that only looks like ours is not deleted");
     }
 
     #[test]
@@ -356,18 +402,15 @@ mod tests {
         let store = MemoryStore::default();
         let bundles = build_bundles(dataset("1ª fase", true), &private_key).unwrap();
         let first = push(&store, &private_key, &public_key, &bundles, None, 100).unwrap();
-        let old_refs: Vec<String> = index_entries(&store, &public_key, &first.index_ref)
-            .into_iter()
-            .map(|entry| entry.reference)
-            .collect();
 
         store.overwrite_field(&first.index_ref, "generatedAt", json!(999));
 
         let report = push(&store, &private_key, &public_key, &bundles, Some(&first.index_ref), 200).unwrap();
         assert_eq!(report.warnings.len(), 1);
         assert_eq!((report.created, report.reused, report.deleted), (2, 0, 0));
-        assert!(old_refs.iter().all(|reference| store.contains(reference)), "nothing deleted from an untrusted index");
+        assert_eq!(report.orphans_removed, 2, "the old copies are signed by us and unused, so they are cleaned up");
         assert_eq!(index_entries(&store, &public_key, &first.index_ref).len(), 2);
+        assert_eq!(store.len(), 3);
     }
 
     #[test]
@@ -401,6 +444,25 @@ mod tests {
         let after = index_entries(&store, &public_key, &first.index_ref);
         assert_eq!(before, after, "index unchanged");
         assert!(after.iter().all(|entry| store.contains(&entry.reference)), "old bundles still exist");
+    }
+
+    #[test]
+    fn leftover_from_a_failed_index_update_is_removed_by_the_next_push() {
+        let (private_key, public_key) = keys();
+        let store = MemoryStore::default();
+        let first_bundles = build_bundles(dataset("1ª fase", true), &private_key).unwrap();
+        let first = push(&store, &private_key, &public_key, &first_bundles, None, 100).unwrap();
+        let changed = build_bundles(dataset("Primeira fase", true), &private_key).unwrap();
+
+        store.fail_patches.set(true);
+        assert!(push(&store, &private_key, &public_key, &changed, Some(&first.index_ref), 200).is_err());
+        assert_eq!(store.len(), 4, "one new bundle was uploaded before the index update failed");
+        assert_eq!(index_entries(&store, &public_key, &first.index_ref), index_entries(&store, &public_key, &first.index_ref));
+
+        store.fail_patches.set(false);
+        let report = push(&store, &private_key, &public_key, &changed, Some(&first.index_ref), 300).unwrap();
+        assert_eq!((report.created, report.reused, report.deleted, report.orphans_removed), (1, 1, 1, 1));
+        assert_eq!(store.len(), 3);
     }
 
     #[test]

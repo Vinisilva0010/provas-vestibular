@@ -211,3 +211,36 @@ describe("loadDataset", () => {
     await expect(load(items)).rejects.toThrow("Two documents share the same id.");
   });
 });
+
+const sharedBases = readFixture("documents.json") as { bases: Record<string, Doc> };
+
+describe("loadDataset with editions and structures", () => {
+  it("loads editions and structures that belong to the bundle", async () => {
+    const items = cloneItems();
+    rewrite(items, {
+      documents: (documents) => [...documents, sharedBases.bases.edition as Doc, sharedBases.bases.structure as Doc],
+    });
+    const dataset = await load(items);
+    expect(dataset.editions.map((edition) => edition.id)).toEqual(["pvb-edition-fuvest-2027"]);
+    expect(dataset.structures.map((structure) => structure.id)).toEqual(["pvb-structure-fuvest-2027"]);
+  });
+
+  it("fails when a signed edition breaks the rules", async () => {
+    const items = cloneItems();
+    rewrite(items, {
+      documents: (documents) => [...documents, { ...(sharedBases.bases.edition as Doc), feeCents: -1 }],
+    });
+    await expect(load(items)).rejects.toThrow('Edition in Bundle "fuvest" is invalid');
+  });
+
+  it("fails when a structure belongs to another exam", async () => {
+    const items = cloneItems();
+    rewrite(items, {
+      documents: (documents) => [
+        ...documents,
+        { ...(sharedBases.bases.structure as Doc), examSlug: "unicamp", id: "pvb-structure-unicamp-2027" },
+      ],
+    });
+    await expect(load(items)).rejects.toThrow('A structure in Bundle "fuvest" belongs to another exam.');
+  });
+});

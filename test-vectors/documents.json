@@ -37,6 +37,60 @@
       "sourceUrl": "https://www.fuvest.br/",
       "checkedAt": "2026-11-11",
       "nature": "official"
+    },
+    "edition": {
+      "id": "pvb-edition-fuvest-2027",
+      "type": "edition",
+      "examSlug": "fuvest",
+      "editionYear": 2027,
+      "howItWorks": "Duas fases: uma de múltipla escolha e outra discursiva.",
+      "vacanciesApprox": 8000,
+      "vacanciesNote": "Mais de 8.000 vagas.",
+      "feeCents": 22800,
+      "documents": [
+        {
+          "label": "Resolução do vestibular",
+          "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-resolucao-DOE.pdf",
+          "kind": "notice",
+          "publishedOn": "2026-07-31"
+        }
+      ],
+      "sourceName": "Fuvest — site oficial",
+      "sourceUrl": "https://www.fuvest.br/",
+      "checkedAt": "2026-11-11",
+      "nature": "official"
+    },
+    "structure": {
+      "id": "pvb-structure-fuvest-2027",
+      "type": "structure",
+      "examSlug": "fuvest",
+      "editionYear": 2027,
+      "phases": [
+        {
+          "key": "phase-1",
+          "label": "1ª fase",
+          "format": "objective",
+          "days": 1,
+          "durationMinutesPerDay": 300,
+          "questionCount": 80,
+          "maxScore": 100,
+          "subjects": ["Português", "Matemática"]
+        },
+        {
+          "key": "phase-2",
+          "label": "2ª fase",
+          "format": "essay",
+          "days": 2,
+          "subjects": ["Português", "Redação"],
+          "notes": ["Questões discursivas."]
+        }
+      ],
+      "scoring": ["Média das fases."],
+      "quotas": [{ "key": "ac", "label": "Ampla concorrência", "description": "Todas as pessoas candidatas." }],
+      "sourceName": "Fuvest — site oficial",
+      "sourceUrl": "https://www.fuvest.br/",
+      "checkedAt": "2026-11-11",
+      "nature": "official"
     }
   },
   "cases": [
@@ -63,6 +117,26 @@
     { "name": "unknown event category", "base": "event", "patch": { "category": "party" }, "valid": false, "path": "category" },
     { "name": "edition year out of range", "base": "event", "patch": { "editionYear": 1999 }, "valid": false, "path": "editionYear" },
     { "name": "zero duration", "base": "event", "patch": { "durationMinutes": 0 }, "valid": false, "path": "durationMinutes" },
-    { "name": "event without a label", "base": "event", "remove": ["label"], "valid": false, "path": "label" }
+    { "name": "event without a label", "base": "event", "remove": ["label"], "valid": false, "path": "label" },
+    { "name": "valid edition", "base": "edition", "valid": true },
+    { "name": "edition with only the required fields", "base": "edition", "remove": ["vacanciesApprox", "vacanciesNote", "feeCents", "documents"], "valid": true },
+    { "name": "edition with an empty document list", "base": "edition", "patch": { "documents": [] }, "valid": true },
+    { "name": "edition id does not match", "base": "edition", "patch": { "id": "pvb-edition-fuvest-2026" }, "valid": false, "path": "id" },
+    { "name": "negative fee", "base": "edition", "patch": { "feeCents": -1 }, "valid": false, "path": "feeCents" },
+    { "name": "fee with cents as a fraction", "base": "edition", "patch": { "feeCents": 228.5 }, "valid": false, "path": "feeCents" },
+    { "name": "edition without a summary", "base": "edition", "remove": ["howItWorks"], "valid": false, "path": "howItWorks" },
+    { "name": "official document outside the allowlist", "base": "edition", "patch": { "documents": [{ "label": "Edital", "url": "https://pdf-gratis.example.com/edital.pdf", "kind": "notice" }] }, "valid": false, "path": "documents.0.url" },
+    { "name": "official document of an unknown kind", "base": "edition", "patch": { "documents": [{ "label": "Edital", "url": "https://www.fuvest.br/edital.pdf", "kind": "rumor" }] }, "valid": false, "path": "documents.0.kind" },
+    { "name": "official document with an unknown field", "base": "edition", "patch": { "documents": [{ "label": "Edital", "url": "https://www.fuvest.br/edital.pdf", "kind": "notice", "size": 10 }] }, "valid": false, "path": "documents.0" },
+    { "name": "official document with an impossible date", "base": "edition", "patch": { "documents": [{ "label": "Edital", "url": "https://www.fuvest.br/edital.pdf", "kind": "notice", "publishedOn": "2026-02-30" }] }, "valid": false, "path": "documents.0.publishedOn" },
+    { "name": "valid structure", "base": "structure", "valid": true },
+    { "name": "structure id does not match", "base": "structure", "patch": { "id": "pvb-structure-unicamp-2027" }, "valid": false, "path": "id" },
+    { "name": "structure without phases", "base": "structure", "patch": { "phases": [] }, "valid": false, "path": "phases" },
+    { "name": "phase with an unknown format", "base": "structure", "patch": { "phases": [{ "key": "phase-1", "label": "1ª fase", "format": "oral", "subjects": ["Português"] }] }, "valid": false, "path": "phases.0.format" },
+    { "name": "phase without subjects", "base": "structure", "patch": { "phases": [{ "key": "phase-1", "label": "1ª fase", "format": "objective", "subjects": [] }] }, "valid": false, "path": "phases.0.subjects" },
+    { "name": "phase with an unknown field", "base": "structure", "patch": { "phases": [{ "key": "phase-1", "label": "1ª fase", "format": "objective", "subjects": ["Português"], "color": "red" }] }, "valid": false, "path": "phases.0" },
+    { "name": "two phases with the same key", "base": "structure", "patch": { "phases": [{ "key": "phase-1", "label": "1ª fase", "format": "objective", "subjects": ["Português"] }, { "key": "phase-1", "label": "Outra", "format": "essay", "subjects": ["Redação"] }] }, "valid": false, "path": "phases" },
+    { "name": "blank scoring rule", "base": "structure", "patch": { "scoring": [" "] }, "valid": false, "path": "scoring.0" },
+    { "name": "quota without description", "base": "structure", "patch": { "quotas": [{ "key": "ac", "label": "Ampla concorrência" }] }, "valid": false, "path": "quotas.0.description" }
   ]
 }
