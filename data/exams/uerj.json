@@ -1,0 +1,18 @@
+{
+  "id": "pvb-exam-uerj",
+  "type": "exam",
+  "slug": "uerj",
+  "officialName": "Vestibular Estadual da UERJ",
+  "shortName": "UERJ",
+  "institution": "Universidade do Estado do Rio de Janeiro (UERJ)",
+  "examFormat": "mixed",
+  "hasStudyPlan": true,
+  "states": ["RJ"],
+  "audience": "Quem está no 3º ano ou já concluiu o ensino médio e quer uma vaga nos cursos de graduação da UERJ",
+  "summary": "Vestibular da UERJ em duas etapas: os Exames de Qualificação, feitos ao longo do ano, e o Exame Discursivo, com redação e duas provas ligadas ao curso escolhido.",
+  "officialSiteUrl": "https://www.vestibular.uerj.br/",
+  "sourceName": "UERJ — inscrições para o Exame Discursivo do Vestibular 2027",
+  "sourceUrl": "https://www.uerj.br/noticia/vestibular-uerj-2027-periodo-de-inscricoes-para-o-exame-discursivo-vai-de-12-de-setembro-a-7-de-outubro/",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}

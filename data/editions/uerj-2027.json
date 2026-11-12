@@ -1,0 +1,22 @@
+{
+  "id": "pvb-edition-uerj-2027",
+  "type": "edition",
+  "examSlug": "uerj",
+  "editionYear": 2027,
+  "howItWorks": "Para fazer o Exame Discursivo, é preciso estar no 3º ano ou ter concluído o ensino médio e ter passado em pelo menos um Exame de Qualificação com conceito A, B, C ou D (acima de 40% de pontuação). A inscrição pode ser feita no site do Vestibular ou presencialmente no campus Maracanã. O Exame Discursivo tem três provas de 20 pontos cada: redação, para todos, e duas provas específicas de acordo com o curso escolhido. A nota final é a soma da nota do Exame de Qualificação com a do Exame Discursivo. Quem concorre por cotas escolhe a modalidade na inscrição e envia os documentos até 8 de outubro. Leituras indicadas: Luanda, Lisboa, Paraíso (Língua Portuguesa e Literatura) e O bem-amado (redação).",
+  "vacanciesApprox": 6031,
+  "vacanciesNote": "6.031 vagas na capital e em Duque de Caxias, São Gonçalo, Nova Friburgo, Petrópolis, Resende e Cabo Frio.",
+  "feeCents": 13000,
+  "feeNote": "Taxa do Exame Discursivo. Quem teve isenção nos Exames de Qualificação não paga.",
+  "documents": [
+    {
+      "label": "Manual do Candidato da 1ª fase (edital)",
+      "url": "https://www.vestibular.uerj.br/anexos/271/Manual_1fase_2027_Edital_.pdf",
+      "kind": "notice"
+    }
+  ],
+  "sourceName": "UERJ — inscrições para o Exame Discursivo do Vestibular 2027",
+  "sourceUrl": "https://www.uerj.br/noticia/vestibular-uerj-2027-periodo-de-inscricoes-para-o-exame-discursivo-vai-de-12-de-setembro-a-7-de-outubro/",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}
