@@ -47,3 +47,14 @@ test("the exam page downloads its dates for a calendar app", async ({ page }) =>
   expect(content).toContain("BEGIN:VCALENDAR");
   expect(content).toContain("BEGIN:VEVENT");
 });
+
+test("the exam list can be searched", async ({ page }) => {
+  await page.goto("/provas");
+  const search = page.getByLabel("Buscar prova");
+
+  await search.fill("fuvest");
+  await expect(page.locator('a[href="/provas/fuvest"]')).toBeVisible();
+
+  await search.fill("prova que não existe");
+  await expect(page.getByText("Nenhuma prova encontrada com esses filtros.")).toBeVisible();
+});
