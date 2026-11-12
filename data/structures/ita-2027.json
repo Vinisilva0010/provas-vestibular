@@ -1,0 +1,54 @@
+{
+  "id": "pvb-structure-ita-2027",
+  "type": "structure",
+  "examSlug": "ita",
+  "editionYear": 2027,
+  "phases": [
+    {
+      "key": "phase-1",
+      "label": "1ª fase",
+      "format": "objective",
+      "days": 1,
+      "durationMinutesPerDay": 300,
+      "questionCount": 48,
+      "subjects": ["Matemática", "Física", "Química", "Inglês"],
+      "notes": [
+        "12 questões de cada matéria.",
+        "É preciso acertar pelo menos 5 questões de cada matéria e ter média mínima de 5,0.",
+        "Inglês elimina quem acerta menos de 5, mas não entra no cálculo da média."
+      ]
+    },
+    {
+      "key": "phase-2",
+      "label": "2ª fase",
+      "format": "mixed",
+      "days": 4,
+      "durationMinutesPerDay": 240,
+      "subjects": ["Matemática", "Química", "Física", "Português", "Redação"],
+      "notes": [
+        "Um dia para cada prova: Matemática, Química, Física e Português.",
+        "Matemática, Física e Química têm 10 questões discursivas cada.",
+        "Português tem 15 questões de múltipla escolha e uma redação dissertativo-argumentativa de 25 a 35 linhas."
+      ]
+    }
+  ],
+  "scoring": [
+    "Na 1ª fase, a média é calculada com Matemática, Física e Química.",
+    "Para ser aprovado no fim, é preciso média geral mínima de 5,0 e nota mínima de 4,0 em cada matéria."
+  ],
+  "eliminationRules": [
+    "Acertar menos de 5 das 12 questões de qualquer matéria na 1ª fase.",
+    "Tirar menos de 4,0 na redação ou acertar 5 ou menos questões de múltipla escolha de Português.",
+    "Tirar menos de 4,0 em qualquer matéria da 2ª fase."
+  ],
+  "quotas": [
+    { "key": "ac", "label": "Ampla concorrência", "description": "140 vagas." },
+    { "key": "pp", "label": "Pretos e pardos", "description": "50 vagas." },
+    { "key": "ind", "label": "Indígenas", "description": "6 vagas." },
+    { "key": "qui", "label": "Quilombolas", "description": "4 vagas." }
+  ],
+  "sourceName": "ITA — Edital do Vestibular ITA 2027",
+  "sourceUrl": "https://www.vestibular.ita.br/instrucoes/edital_2027.pdf",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}

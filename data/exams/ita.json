@@ -1,0 +1,18 @@
+{
+  "id": "pvb-exam-ita",
+  "type": "exam",
+  "slug": "ita",
+  "officialName": "Vestibular do ITA (Concurso de Admissão ao Instituto Tecnológico de Aeronáutica)",
+  "shortName": "ITA",
+  "institution": "Instituto Tecnológico de Aeronáutica (ITA)",
+  "examFormat": "mixed",
+  "hasStudyPlan": true,
+  "states": ["SP"],
+  "audience": "Quem concluiu ou vai concluir o ensino médio e não completa 25 anos até 31 de dezembro de 2027",
+  "summary": "Vestibular do ITA em três fases: a 1ª com 48 questões de múltipla escolha; a 2ª com quatro dias de provas (Matemática, Química e Física discursivas, e Português com redação); e a 3ª com inspeção de saúde.",
+  "officialSiteUrl": "https://www.vestibular.ita.br/",
+  "sourceName": "ITA — Edital do Vestibular ITA 2027",
+  "sourceUrl": "https://www.vestibular.ita.br/instrucoes/edital_2027.pdf",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}

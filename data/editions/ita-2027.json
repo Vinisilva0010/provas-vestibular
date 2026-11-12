@@ -1,0 +1,31 @@
+{
+  "id": "pvb-edition-ita-2027",
+  "type": "edition",
+  "examSlug": "ita",
+  "editionYear": 2027,
+  "howItWorks": "A inscrição é feita no site do vestibular do ITA. Na 1ª fase, é preciso acertar pelo menos 5 das 12 questões de cada matéria e ter média mínima de 5,0; os mais bem classificados vão para a 2ª fase, que tem quatro dias de prova. Para ser aprovado, é preciso média geral mínima de 5,0 e nota mínima de 4,0 em cada matéria. Os classificados ainda passam pela 3ª fase, a inspeção de saúde.",
+  "vacanciesApprox": 200,
+  "vacanciesNote": "200 vagas: 140 de ampla concorrência, 50 para pretos e pardos, 6 para indígenas e 4 para quilombolas.",
+  "feeCents": 19500,
+  "documents": [
+    {
+      "label": "Edital do Vestibular ITA 2027",
+      "url": "https://www.vestibular.ita.br/instrucoes/edital_2027.pdf",
+      "kind": "notice"
+    },
+    {
+      "label": "Edital de isenção da taxa",
+      "url": "https://www.vestibular.ita.br/isencao/index.htm",
+      "kind": "exemption-rules"
+    },
+    {
+      "label": "Estatísticas de inscritos 2027",
+      "url": "https://www.vestibular.ita.br/inscritos/2027_estatisticas.pdf",
+      "kind": "other"
+    }
+  ],
+  "sourceName": "ITA — Edital do Vestibular ITA 2027",
+  "sourceUrl": "https://www.vestibular.ita.br/instrucoes/edital_2027.pdf",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}
