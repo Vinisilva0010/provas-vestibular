@@ -1,3 +1,4 @@
+import { resolveSiteUrl } from "@/lib/site-url";
 import type { Metadata, Viewport } from "next";
 import { Anton, Lexend } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -20,6 +21,7 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(resolveSiteUrl(process.env)),
   title: {
     default: siteName,
     template: `%s | ${siteName}`,
