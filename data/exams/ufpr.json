@@ -1,0 +1,18 @@
+{
+  "id": "pvb-exam-ufpr",
+  "type": "exam",
+  "slug": "ufpr",
+  "officialName": "Vestibular UFPR",
+  "shortName": "UFPR",
+  "institution": "Universidade Federal do Paraná (UFPR), com o vestibular organizado pelo Núcleo de Concursos (NC/UFPR)",
+  "examFormat": "mixed",
+  "hasStudyPlan": true,
+  "states": ["PR"],
+  "audience": "Quem concluiu ou vai concluir o ensino médio e quer uma vaga nos cursos de graduação da UFPR",
+  "summary": "Vestibular da UFPR em fase única: 80 questões objetivas e duas discursivas no mesmo dia. Quem escolhe Música faz também prova de habilidades específicas.",
+  "officialSiteUrl": "https://servicos.nc.ufpr.br/PortalNC/",
+  "sourceName": "UFPR — Abertas as inscrições para o Vestibular 2027",
+  "sourceUrl": "https://ufpr.br/abertas-as-inscricoes-para-o-vestibular-2027-que-tera-fase-unica-e-novo-modelo-de-prova/",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}

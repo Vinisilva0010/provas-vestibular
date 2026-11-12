@@ -1,0 +1,60 @@
+{
+  "id": "pvb-structure-ufpr-2027",
+  "type": "structure",
+  "examSlug": "ufpr",
+  "editionYear": 2027,
+  "phases": [
+    {
+      "key": "single",
+      "label": "Fase única",
+      "format": "mixed",
+      "days": 1,
+      "durationMinutesPerDay": 330,
+      "questionCount": 80,
+      "subjects": [
+        "Português",
+        "Biologia",
+        "Física",
+        "Geografia",
+        "História",
+        "Matemática",
+        "Química",
+        "Língua estrangeira moderna",
+        "Literatura Brasileira",
+        "Filosofia",
+        "Sociologia",
+        "Questões discursivas"
+      ],
+      "notes": [
+        "Prova objetiva com 80 questões, valendo 80 pontos: Português 10; Biologia, Física, Geografia, História, Matemática e Química 8 cada; língua estrangeira 7; Literatura Brasileira, Filosofia e Sociologia 5 cada.",
+        "Prova discursiva valendo 40 pontos: uma questão de até 15 linhas (25 pontos) e uma de até 5 linhas (15 pontos).",
+        "As duas provas são feitas no mesmo dia."
+      ]
+    }
+  ],
+  "scoring": [
+    "A prova objetiva vale 80 pontos e a discursiva, 40 pontos.",
+    "As questões objetivas têm pesos diferentes conforme o curso escolhido.",
+    "A prova discursiva só é corrigida para os mais bem colocados de cada curso, até três vezes o número de vagas."
+  ],
+  "eliminationRules": [
+    "Tirar zero na prova objetiva.",
+    "Tirar zero na prova discursiva."
+  ],
+  "quotas": [
+    {
+      "key": "cotas",
+      "label": "Cotas",
+      "description": "Pelo menos metade das vagas é reservada para cotas, com modalidades para estudantes de escola pública, pretos, pardos e indígenas, quilombolas e pessoas com deficiência, com e sem critério de renda."
+    },
+    {
+      "key": "pcd-extra",
+      "label": "Vaga extra para pessoa com deficiência",
+      "description": "Cada curso tem uma vaga a mais, reservada para pessoa com deficiência."
+    }
+  ],
+  "sourceName": "UFPR — Edital nº 50/2026-NC/PROGRAP (Vestibular UFPR 2027)",
+  "sourceUrl": "https://servicos.nc.ufpr.br/PortalNC/obterDocumento?pub=9363",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}

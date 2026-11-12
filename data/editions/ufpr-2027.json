@@ -1,0 +1,22 @@
+{
+  "id": "pvb-edition-ufpr-2027",
+  "type": "edition",
+  "examSlug": "ufpr",
+  "editionYear": 2027,
+  "howItWorks": "A partir desta edição, o vestibular tem fase única, com 80 questões objetivas e duas discursivas. A prova foi na tarde de 1º de novembro, e quem escolheu Música fez também a prova de habilidades específicas em 2 de novembro. Os pedidos de isenção da taxa foram até 15 de junho.",
+  "vacanciesApprox": 4603,
+  "vacanciesNote": "4.603 vagas em 130 cursos de graduação.",
+  "feeCents": 18000,
+  "feeNote": "A taxa caiu de R$ 195,00 para R$ 180,00 nesta edição.",
+  "documents": [
+    {
+      "label": "Edital nº 50/2026-NC/PROGRAP (Vestibular UFPR 2027)",
+      "url": "https://servicos.nc.ufpr.br/PortalNC/obterDocumento?pub=9363",
+      "kind": "notice"
+    }
+  ],
+  "sourceName": "UFPR — Abertas as inscrições para o Vestibular 2027",
+  "sourceUrl": "https://ufpr.br/abertas-as-inscricoes-para-o-vestibular-2027-que-tera-fase-unica-e-novo-modelo-de-prova/",
+  "checkedAt": "2026-11-12",
+  "nature": "official"
+}
