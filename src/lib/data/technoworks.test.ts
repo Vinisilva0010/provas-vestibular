@@ -12,6 +12,8 @@ function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
 }
 
+const noWait = { retryDelaysMs: [0, 0] };
+
 describe("createTechnoworksFetcher", () => {
   it("reads the 'dados' object of an item", async () => {
     const fetchImpl = vi.fn(async () => jsonResponse({ status: "ok", dados: { id: "abc", pvbKey: "index" } }));
@@ -28,14 +30,33 @@ describe("createTechnoworksFetcher", () => {
     await expect(fetchItem("abc")).resolves.toBeNull();
   });
 
-  it("fails on server errors without exposing the RA", async () => {
-    const fetchItem = createTechnoworksFetcher("123456", {
-      fetchImpl: async () => jsonResponse({ status: "erro" }, 502),
-    });
+  it("retries a temporary 502 and then succeeds", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(jsonResponse({ status: "erro" }, 502))
+      .mockResolvedValueOnce(jsonResponse({ status: "ok", dados: { pvbKey: "index" } }));
+    const fetchItem = createTechnoworksFetcher("123456", { fetchImpl, ...noWait });
+
+    await expect(fetchItem("abc")).resolves.toEqual({ pvbKey: "index" });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("gives up after the retries without exposing the RA", async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse({ status: "erro" }, 502));
+    const fetchItem = createTechnoworksFetcher("123456", { fetchImpl, ...noWait });
+
     const error = await fetchItem("abc").catch((caught: unknown) => caught);
     expect(error).toBeInstanceOf(DatasetError);
     expect((error as Error).message).toContain("502");
     expect((error as Error).message).not.toContain("123456");
+    expect(fetchImpl).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not retry errors that are not temporary", async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse({ status: "erro" }, 500));
+    const fetchItem = createTechnoworksFetcher("123456", { fetchImpl, ...noWait });
+    await expect(fetchItem("abc")).rejects.toBeInstanceOf(DatasetError);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
   it("fails when the response has no 'dados' object", async () => {

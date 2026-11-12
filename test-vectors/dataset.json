@@ -7,6 +7,29 @@
       "bundle": "fuvest",
       "documents": [
         {
+          "checkedAt": "2026-11-11",
+          "documents": [
+            {
+              "kind": "notice",
+              "label": "Resolução do vestibular",
+              "publishedOn": "2026-07-31",
+              "url": "https://www.fuvest.br/wp-content/uploads/fuvest2027-resolucao-DOE.pdf"
+            }
+          ],
+          "editionYear": 2027,
+          "examSlug": "fuvest",
+          "feeCents": 22800,
+          "howItWorks": "Duas fases: uma de múltipla escolha e outra discursiva.",
+          "id": "pvb-edition-fuvest-2027",
+          "nature": "official",
+          "signature": "e00f5703eb10f2afb8d1fb96f42827930ff2975dc56f8ffb0cb56427ef84b69237dae2254dfea8a6452b2a01a28eda1c7fe12599366994c877378ed8ebc10201",
+          "sourceName": "Fuvest — site oficial",
+          "sourceUrl": "https://www.fuvest.br/",
+          "type": "edition",
+          "vacanciesApprox": 8000,
+          "vacanciesNote": "Mais de 8.000 vagas."
+        },
+        {
           "category": "exam-day",
           "checkedAt": "2026-11-11",
           "durationMinutes": 300,
@@ -46,12 +69,61 @@
           ],
           "summary": "Vestibular da USP, em duas fases.",
           "type": "exam"
+        },
+        {
+          "checkedAt": "2026-11-11",
+          "editionYear": 2027,
+          "examSlug": "fuvest",
+          "id": "pvb-structure-fuvest-2027",
+          "nature": "official",
+          "phases": [
+            {
+              "days": 1,
+              "durationMinutesPerDay": 300,
+              "format": "objective",
+              "key": "phase-1",
+              "label": "1ª fase",
+              "maxScore": 100,
+              "questionCount": 80,
+              "subjects": [
+                "Português",
+                "Matemática"
+              ]
+            },
+            {
+              "days": 2,
+              "format": "essay",
+              "key": "phase-2",
+              "label": "2ª fase",
+              "notes": [
+                "Questões discursivas."
+              ],
+              "subjects": [
+                "Português",
+                "Redação"
+              ]
+            }
+          ],
+          "quotas": [
+            {
+              "description": "Todas as pessoas candidatas.",
+              "key": "ac",
+              "label": "Ampla concorrência"
+            }
+          ],
+          "scoring": [
+            "Média das fases."
+          ],
+          "signature": "267c4d980b919dd1818daedd86c94d0b9e3da8cabff21aeeb6a45232db8a7de922d29bda870517c5a0a6ef947873b35326b99381f7c6d71f7c3a0d42eae3d508",
+          "sourceName": "Fuvest — site oficial",
+          "sourceUrl": "https://www.fuvest.br/",
+          "type": "structure"
         }
       ],
       "formatVersion": 1,
       "id": "mem1",
       "pvbKey": "bundle-fuvest",
-      "signature": "814ae7ca5a83abd093ec922b079de45d369b0e7970eed2d53fd2b39719d8439b1cf747c7c7066d62030be3196abcce4251c7f8f167ebdf1a4a1afd4468f59c05"
+      "signature": "6483b90436180ef5bc679251c45b76b24dde8d1b2d574b1116526e3f5f0b226eeb3162a4ac6f2e49c6ed9a1e93e563f5d33c3f7061d91889d4d876fd28596f02"
     },
     "mem2": {
       "_criadoEm": "2026-11-11T00:00:00.000Z",
@@ -59,14 +131,14 @@
         {
           "key": "fuvest",
           "ref": "mem1",
-          "signature": "814ae7ca5a83abd093ec922b079de45d369b0e7970eed2d53fd2b39719d8439b1cf747c7c7066d62030be3196abcce4251c7f8f167ebdf1a4a1afd4468f59c05"
+          "signature": "6483b90436180ef5bc679251c45b76b24dde8d1b2d574b1116526e3f5f0b226eeb3162a4ac6f2e49c6ed9a1e93e563f5d33c3f7061d91889d4d876fd28596f02"
         }
       ],
       "formatVersion": 1,
       "generatedAt": 1700000000,
       "id": "mem2",
       "pvbKey": "index",
-      "signature": "939bea6fae2768fd03e1dc78b1b62e2d688742f8def34bcec2e8ac9d33e19b5df75d7a0b48399c0af454494c3113e69cfb9e4f62e8d100eefd53147493082009"
+      "signature": "12b6d65e0c635ae6ef7c7ca7f554048e4b7525fe0c7e655be31c89a4cc9630108ddc0ac287e9cf16228f34b5f4b1cd061a0d8ea8b16fd6bcb28010f8ec699106"
     }
   },
   "publicKeyHex": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8"

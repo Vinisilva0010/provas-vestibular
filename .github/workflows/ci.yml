@@ -12,6 +12,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      PVB_DATA_SOURCE: fixture
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

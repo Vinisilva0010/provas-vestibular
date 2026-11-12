@@ -16,12 +16,16 @@ function calendarDateIn(timeZone: string, instant: Date): string {
   }).format(instant);
 }
 
+/** Today's calendar date (YYYY-MM-DD) in Brasília. */
+export function todayInExamTimeZone(now: Date = new Date()): string {
+  return calendarDateIn(EXAM_TIME_ZONE, now);
+}
+
 /**
  * Number of calendar days from today (in Brasília) until the target date.
  * Returns 0 for today, a positive number for future dates and a negative
  * number for past dates.
  */
 export function daysUntil(targetIsoDate: string, now: Date = new Date()): number {
-  const today = calendarDateIn(EXAM_TIME_ZONE, now);
-  return toEpochDay(targetIsoDate) - toEpochDay(today);
+  return toEpochDay(targetIsoDate) - toEpochDay(todayInExamTimeZone(now));
 }

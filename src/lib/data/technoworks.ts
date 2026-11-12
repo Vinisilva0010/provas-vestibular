@@ -3,13 +3,15 @@ import "server-only";
 /**
  * Read-only client for the Technoworks REST database.
  * Facts checked against the live API: GET /rest/{ra}/{id} answers
- * { status, dados } and adds `id`, `_criadoEm` and `_atualizadoEm` to every item.
+ * { status, dados } and adds `id`, `_criadoEm` and `_atualizadoEm` to every item;
+ * the server sometimes answers 502 and a retry succeeds.
  */
 
 export const TECHNOWORKS_BASE_URL = "https://technoworks.com.br";
 
 const REFERENCE = /^[A-Za-z0-9]{1,128}$/;
 const RA = /^[A-Za-z0-9-]{1,32}$/;
+const TRANSIENT_STATUSES = new Set([502, 503, 504]);
 
 export class DatasetError extends Error {
   constructor(message: string) {
@@ -39,7 +41,14 @@ export function stripServerFields(item: Record<string, unknown>): Record<string,
   );
 }
 
-type FetcherOptions = { fetchImpl?: typeof fetch; timeoutMs?: number };
+type FetcherOptions = {
+  fetchImpl?: typeof fetch;
+  timeoutMs?: number;
+  /** Waits before each retry of a temporary failure; its length is the number of retries. */
+  retryDelaysMs?: readonly number[];
+};
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
 /**
  * Builds a function that reads one item by reference. Returns null on 404.
@@ -51,16 +60,26 @@ export function createTechnoworksFetcher(ra: string, options: FetcherOptions = {
   }
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? 15_000;
+  const retryDelaysMs = options.retryDelaysMs ?? [1_000, 2_000];
 
   return async (reference) => {
     if (!isValidReference(reference)) {
       throw new DatasetError("Refusing to request an invalid item reference.");
     }
 
-    const response = await fetchImpl(`${TECHNOWORKS_BASE_URL}/rest/${ra}/${reference}`, {
-      headers: { accept: "application/json" },
-      signal: AbortSignal.timeout(timeoutMs),
-    });
+    const url = `${TECHNOWORKS_BASE_URL}/rest/${ra}/${reference}`;
+    const request = () =>
+      fetchImpl(url, {
+        headers: { accept: "application/json" },
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+
+    let response = await request();
+    for (const delay of retryDelaysMs) {
+      if (!TRANSIENT_STATUSES.has(response.status)) break;
+      await sleep(delay);
+      response = await request();
+    }
 
     if (response.status === 404) {
       return null;

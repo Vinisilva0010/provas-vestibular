@@ -476,7 +476,7 @@ mod tests {
         let private_key = PrivateKey::from_hex(vectors["privateKeySeedHex"].as_str().unwrap()).unwrap();
         let public_key = private_key.public_key();
 
-        let documents = vec![cases["bases"]["exam"].clone(), cases["bases"]["event"].clone()];
+        let documents = ["exam", "event", "edition", "structure"].iter().map(|base| cases["bases"][*base].clone()).collect();
         let bundles = build_bundles(documents, &private_key).unwrap();
         let store = MemoryStore::default();
         let report = push(&store, &private_key, &public_key, &bundles, None, 1_700_000_000).unwrap();

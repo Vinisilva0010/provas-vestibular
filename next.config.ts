@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   outputFileTracingRoot: projectRoot,
+  // Files read with fs at runtime when the cached dataset is refreshed.
+  outputFileTracingIncludes: {
+    "/**": ["./config/data-public-key.txt", "./test-vectors/dataset.json"],
+  },
   turbopack: {
     root: projectRoot,
     rules: {

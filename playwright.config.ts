@@ -21,5 +21,7 @@ export default defineConfig({
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    // Signed test data: no network, no dependency on the live database.
+    env: { PVB_DATA_SOURCE: "fixture" },
   },
 });
