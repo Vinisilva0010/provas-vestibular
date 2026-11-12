@@ -44,7 +44,7 @@ export default async function ExamPage({ params }: Props) {
           <div className="flex flex-wrap gap-3">
             {editionYear && (
               <Badge tone="coral" className="-rotate-2 text-lg">
-                Edição {editionYear}
+                Para entrar em {editionYear}
               </Badge>
             )}
             {exam.hasStudyPlan && <Badge className="rotate-1 text-lg">Tem plano de estudo</Badge>}

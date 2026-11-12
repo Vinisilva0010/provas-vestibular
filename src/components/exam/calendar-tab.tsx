@@ -29,7 +29,7 @@ export function CalendarTab({ events, editionYear }: { events: ExamEvent[]; edit
 
   return (
     <div>
-      <p className="text-xl">Datas da edição {editionYear}, sempre no horário de Brasília.</p>
+      <p className="text-xl">Datas para entrar na faculdade em {editionYear}, sempre no horário de Brasília.</p>
       <ol className="mt-8 space-y-7 border-l-4 border-ink pl-6 sm:pl-8">
         {events.map((event) => {
           const details = timeDetails(event);

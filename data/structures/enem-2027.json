@@ -1,0 +1,44 @@
+{
+  "id": "pvb-structure-enem-2027",
+  "type": "structure",
+  "examSlug": "enem",
+  "editionYear": 2027,
+  "phases": [
+    {
+      "key": "day-1",
+      "label": "1º dia",
+      "format": "mixed",
+      "days": 1,
+      "durationMinutesPerDay": 330,
+      "subjects": [
+        "Linguagens, Códigos e suas Tecnologias",
+        "Língua estrangeira (inglês ou espanhol)",
+        "Ciências Humanas e suas Tecnologias",
+        "Redação"
+      ]
+    },
+    {
+      "key": "day-2",
+      "label": "2º dia",
+      "format": "objective",
+      "days": 1,
+      "durationMinutesPerDay": 300,
+      "subjects": [
+        "Ciências da Natureza e suas Tecnologias",
+        "Matemática e suas Tecnologias"
+      ]
+    }
+  ],
+  "scoring": [
+    "As notas das provas objetivas são calculadas pela Teoria de Resposta ao Item (TRI), e não apenas pelo número de acertos.",
+    "A redação vale de 0 a 1000 pontos e é corrigida por pelo menos dois corretores, cada um de forma independente.",
+    "Cada corretor dá de 0 a 200 pontos em cada uma das cinco competências da redação."
+  ],
+  "eliminationRules": [
+    "A redação recebe nota zero, por exemplo, quando é entregue em branco, foge do tema ou não segue a estrutura dissertativo-argumentativa."
+  ],
+  "sourceName": "Inep — perguntas frequentes sobre o Enem",
+  "sourceUrl": "https://www.gov.br/inep/pt-br/acesso-a-informacao/perguntas-frequentes/exame-nacional-do-ensino-medio-enem",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}

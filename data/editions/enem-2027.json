@@ -1,0 +1,21 @@
+{
+  "id": "pvb-edition-enem-2027",
+  "type": "edition",
+  "examSlug": "enem",
+  "editionYear": 2027,
+  "howItWorks": "Esta é a edição feita em 2026, usada para entrar na faculdade em 2027. A inscrição é feita na Página do Participante. Estudantes do último ano da rede pública são pré-inscritos pela escola e só precisam entrar para confirmar a cidade de prova, a língua estrangeira e os recursos de acessibilidade. Quem concluir o ensino médio em 2026 e fizer os dois dias recebe R$ 200 a mais do Pé-de-Meia.",
+  "feeCents": 8500,
+  "feeNote": "Valor para quem não tem isenção.",
+  "documents": [
+    {
+      "label": "Edital nº 64/2026 do Enem",
+      "url": "https://www.in.gov.br/web/dou/-/edital-n-64-de-21-de-maio-de-2026-707325396",
+      "kind": "notice",
+      "publishedOn": "2026-05-22"
+    }
+  ],
+  "sourceName": "Inep — Enem 2026: publicado edital com novidades para concluintes",
+  "sourceUrl": "https://www.gov.br/inep/pt-br/centrais-de-conteudo/noticias/enem/enem-2026-publicado-edital-com-novidades-para-concluintes",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}

@@ -13,7 +13,7 @@ test("the exam page shows calendar, structure and official documents", async ({ 
   await page.goto("/provas/fuvest");
 
   await page.getByRole("tab", { name: "Calendário" }).click();
-  await expect(page.getByRole("tabpanel", { name: "Calendário" })).toContainText("Datas da edição");
+  await expect(page.getByRole("tabpanel", { name: "Calendário" })).toContainText("Datas para entrar na faculdade em");
 
   await page.getByRole("tab", { name: "Como é a prova" }).click();
   await expect(page.getByRole("tabpanel", { name: "Como é a prova" })).toContainText("Como a nota é calculada");

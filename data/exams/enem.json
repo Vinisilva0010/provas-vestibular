@@ -1,0 +1,18 @@
+{
+  "id": "pvb-exam-enem",
+  "type": "exam",
+  "slug": "enem",
+  "officialName": "Exame Nacional do Ensino Médio (Enem)",
+  "shortName": "Enem",
+  "institution": "Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (Inep), ligado ao Ministério da Educação",
+  "examFormat": "mixed",
+  "hasStudyPlan": true,
+  "states": ["BR"],
+  "audience": "Quem concluiu ou vai concluir o ensino médio. Quem tem 18 anos ou mais também pode pedir, na inscrição, para usar a nota como certificado do ensino médio",
+  "summary": "Prova nacional do Inep, feita em dois domingos de novembro: no 1º dia, Linguagens, língua estrangeira, Ciências Humanas e redação; no 2º dia, Ciências da Natureza e Matemática.",
+  "officialSiteUrl": "https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem",
+  "sourceName": "Inep — Enem 2026: falta um mês para o primeiro dia de provas",
+  "sourceUrl": "https://www.gov.br/inep/pt-br/centrais-de-conteudo/noticias/enem/enem-2026-falta-um-mes-para-o-primeiro-dia-de-provas",
+  "checkedAt": "2026-11-11",
+  "nature": "official"
+}
